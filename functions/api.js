@@ -32,22 +32,29 @@ app.get("/serviceClient/:serviceClientId/getTokenForAccount/:connectedAccountId"
     if (!connectedAccountId)
         return res.status(400).send("Connected account ID is required")
 
-    const connectedAccount = await db.collection(SERVICE_CLIENTS_COLLECTION).doc(serviceClientId)
-        .collection(CONNECTED_ACCOUNTS_SUBCOLLECTION).doc(connectedAccountId).get()
+    const connectedAccountRef = db.collection(SERVICE_CLIENTS_COLLECTION).doc(serviceClientId)
+        .collection(CONNECTED_ACCOUNTS_SUBCOLLECTION).doc(connectedAccountId)
+    const connectedAccount = await connectedAccountRef.get()
         .then(snapshot => snapshot.data())
 
     if (!connectedAccount)
         return res.status(404).send(`Connected account ${connectedAccountId} not found`)
 
+    let tokenData
     switch (req.serviceClient.serviceId) {
         case SERVICE.GOOGLE.id:
-            return res.send(await google.getFreshToken({
+            tokenData = await google.getFreshToken({
                 serviceClient: req.serviceClient,
                 connectedAccount,
-            }))
+            })
+            break
+        default:
+            return res.status(501).send("Not implemented")
     }
 
-    res.status(501).send("Not implemented")
+    await connectedAccountRef.update(tokenData)
+
+    res.send(tokenData)
 })
 
 /**

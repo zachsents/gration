@@ -134,7 +134,7 @@ export const AuthorizeOAuth2User = onRequest(async (req, res) => {
 
     switch (serviceClient.serviceId) {
         case SERVICE.GOOGLE.id:
-            res.redirect(
+            return res.redirect(
                 google.getOAuth2Client(serviceClient).generateAuthUrl({
                     access_type: "offline",
                     scope: [...new Set([...serviceClient.scopes, ...parseScopes(req.query.scopes)])],
@@ -142,7 +142,6 @@ export const AuthorizeOAuth2User = onRequest(async (req, res) => {
                     include_granted_scopes: true,
                 })
             )
-            return
     }
 
     res.status(501).send("Not implemented")
