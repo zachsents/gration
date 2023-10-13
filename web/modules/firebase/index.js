@@ -16,7 +16,6 @@ const firebaseConfig = {
 }
 
 
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)
 const analytics = global.window && getAnalytics(app)
@@ -41,5 +40,3 @@ export const fire = {
     auth,
     functions,
 }
-
-export * from "./use-count-query"

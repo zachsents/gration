@@ -1,6 +1,7 @@
 import { DEFAULT_THEME } from "@mantine/core"
+import _ from "lodash"
 
-const primaryColor = "teal"
+const primaryColor = "orange"
 
 /** @type {import("@mantine/core").MantineThemeOverride} */
 export const mantineTheme = {
@@ -19,7 +20,7 @@ export const mantineTheme = {
     },
     defaultRadius: "md",
     colors: {
-        primary: DEFAULT_THEME.colors[primaryColor],
+        pg: ["#efeef7", "#cfcce6", "#afa9d5", "#8f87c4", "#6e65b4", "#554b9a", "#423b78", "#2f2a56", "#1c1933", "#090811"],
     },
     shadows: {
         xs: "0 2px 3px -1px rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
@@ -32,6 +33,8 @@ export const mantineTheme = {
         dateTimeFormat: "MMM D, YYYY h:mm A",
     },
 }
+mantineTheme.colors.primary = { ...DEFAULT_THEME.colors, ...mantineTheme.colors }[primaryColor]
+
 
 export const tailwindTheme = {
     // Tailwind takes colors in the form of:
@@ -40,13 +43,7 @@ export const tailwindTheme = {
     //     200: "#e5d4d4",
     //     ...
     colors: {
-        ...Object.fromEntries(
-            Object.entries(DEFAULT_THEME.colors).map(([color, colorSet]) => [
-                color,
-                colorArrayToTailwindObject(colorSet)
-            ])
-        ),
-        primary: colorArrayToTailwindObject(DEFAULT_THEME.colors[mantineTheme.primaryColor]),
+        ..._.mapValues({ ...DEFAULT_THEME.colors, ...mantineTheme.colors }, colorArrayToTailwindObject),
         white: "#fff",
         black: "#000",
     },
