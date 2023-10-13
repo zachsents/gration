@@ -57,33 +57,6 @@ export const RegisterOAuth2Client = onCall(callablePipeline(
 
 
 /**
- * Updates the client secret for the given OAuth2 client.
- */
-export const UpdateOAuth2ClientSecret = onCall(callablePipeline(
-    requireAuth(),
-    validateSchema(Joi.object({
-        serviceClientId: Joi.string().required(),
-        clientSecret: Joi.string().required(),
-    })),
-    async ({ data, auth }) => {
-        const serviceClientRef = db.collection(SERVICE_CLIENTS_COLLECTION).doc(data.serviceClientId)
-        const serviceClient = await serviceClientRef.get().then(snapshot => snapshot.data())
-
-        if (!serviceClient)
-            throw new HttpsError("not-found", `Service client ${data.serviceClientId} not found`)
-
-        if (serviceClient.owner !== auth?.uid)
-            throw new HttpsError("permission-denied", `Service client ${data.serviceClientId} is owned by another user`)
-
-        if (serviceClient.authType !== SERVICE_AUTH_TYPE.OAUTH2)
-            throw new HttpsError("failed-precondition", `Service client ${data.serviceClientId} is not an OAuth2 client`)
-
-        await serviceClientRef.update({ clientSecret: data.clientSecret })
-    },
-))
-
-
-/**
  * Creates a new secret key for the given OAuth2 client. Does not
  * return the new secret key.
  */
