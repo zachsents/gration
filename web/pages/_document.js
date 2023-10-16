@@ -12,27 +12,29 @@ export default function Document() {
                 <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
 
                 {/* Title & Description */}
-                <title key="title">xxx</title>
+                <title key="title">Never build an OAuth flow again | WoahAuth</title>
                 <meta
                     name="description"
-                    content="xxx"
+                    content="Simplify your SaaS integrations with our seamless OAuth solutions. Connect to Google, Stripe, Outlook, and more effortlessly. Elevate user experience with secure and swift connections."
                     key="description"
                 />
 
                 {/* Favicon & other icons */}
                 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
                 <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+                <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+                <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
                 <link rel="manifest" href="/site.webmanifest" />
 
                 {/* OpenGraph */}
                 <meta
                     property="og:title"
-                    content="xxx"
+                    content="WoahAuth | Managed OAuth flows for SaaS integrations"
                     key="ogtitle"
                 />
                 <meta
                     property="og:description"
-                    content="xxx"
+                    content="Simplify your SaaS integrations with our seamless OAuth solutions. Connect to Google, Stripe, Outlook, and more effortlessly. Elevate user experience with secure and swift connections."
                     key="ogdescription"
                 />
                 <meta property="og:image" content="/og.png" />
