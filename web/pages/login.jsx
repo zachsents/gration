@@ -1,8 +1,11 @@
 import { Anchor, Button, Center, Divider, PasswordInput, Stack, Text, TextInput, Title } from "@mantine/core"
 import { useForm } from "@mantine/form"
+import { notifications } from "@mantine/notifications"
+import BrandCarousel from "@web/components/BrandCarousel"
 import { createUserWithEmail, signInWithEmail, signInWithGoogle, useMustNotBeSignedIn } from "@web/modules/firebase/auth"
 import Link from "next/link"
 import { useRouter } from "next/router"
+import { useEffect } from "react"
 import { useState } from "react"
 import { FcGoogle } from "react-icons/fc"
 import { useMutation } from "react-query"
@@ -35,10 +38,15 @@ export default function LoginPage() {
         },
     })
 
+    const onSuccess = () => {
+        router.push("/")
+        notifications.clean()
+    }
+
     const googleMut = useMutation({
         mutationFn: signInWithGoogle,
         onError: (err) => setFormError(err.message.replace("Firebase: ", "")),
-        onSuccess: () => router.push("/"),
+        onSuccess,
     })
 
     const emailMut = useMutation({
@@ -46,7 +54,7 @@ export default function LoginPage() {
             createUserWithEmail(email, password) :
             signInWithEmail(email, password),
         onError: (err) => setFormError(err.message.replace("Firebase: ", "")),
-        onSuccess: () => router.push("/"),
+        onSuccess,
     })
 
     const handleFormSubmit = values => {
@@ -54,13 +62,24 @@ export default function LoginPage() {
         emailMut.mutate(values)
     }
 
+    useEffect(() => {
+        notifications.show({
+            title: "We're accepting waitlisters!",
+            message: "Sign in to automatically join the waitlist.",
+            id: "waitlist-notification",
+            autoClose: false,
+            icon: "👋",
+            color: "pg.2",
+        })
+    }, [])
+
     return (
         <div className="flex h-screen max-h-screen w-screen items-stretch">
             <Center className="p-xl max-w-sm grow">
                 <form onSubmit={form.onSubmit(handleFormSubmit)}>
                     <Stack>
                         <Title order={2} className="text-center mb-xl">
-                            Welcome to Gration
+                            Welcome to WoahAuth
                         </Title>
                         <Button
                             variant="default" leftIcon={<FcGoogle />} radius="xl"
@@ -103,7 +122,9 @@ export default function LoginPage() {
                     </Stack>
                 </form>
             </Center>
-            <div className="bg-pg-800 flex-1"></div>
+            <div className="bg-pg-800 flex-1 min-w-0 flex flex-col items-stretch py-12">
+                <BrandCarousel />
+            </div>
         </div>
     )
 }
