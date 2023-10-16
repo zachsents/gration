@@ -5,7 +5,7 @@ import { AUTH_STATE_COLLECTION, CONNECTED_ACCOUNTS_SUBCOLLECTION, SERVICE_CLIENT
 import { SERVICE, SERVICE_AUTH_TYPE } from "shared/services.js"
 import { db } from "./init.js"
 import * as google from "./modules/google.js"
-import { generateKey, parseScopes } from "./modules/util.js"
+import { generateSecretKey, parseScopes } from "./modules/util.js"
 
 
 /**
@@ -48,7 +48,7 @@ export const RegisterOAuth2Client = onCall(callablePipeline(
             createdAt: FieldValue.serverTimestamp(),
             owner: auth?.uid,
             authType: SERVICE_AUTH_TYPE.OAUTH2,
-            secretKey: generateKey(),
+            secretKey: generateSecretKey(),
         })
 
         return { serviceClientId: id }
@@ -78,7 +78,7 @@ export const RollOAuth2SecretKey = onCall(callablePipeline(
         if (serviceClient.authType !== SERVICE_AUTH_TYPE.OAUTH2)
             throw new HttpsError("failed-precondition", `Service client ${data.serviceClientId} is not an OAuth2 client`)
 
-        await serviceClientRef.update({ secretKey: generateKey() })
+        await serviceClientRef.update({ secretKey: generateSecretKey() })
     },
 ))
 
