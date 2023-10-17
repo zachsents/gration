@@ -2,10 +2,10 @@ import { Anchor, Button, Center, Divider, PasswordInput, Stack, Text, TextInput,
 import { useForm } from "@mantine/form"
 import { notifications } from "@mantine/notifications"
 import BrandCarousel from "@web/components/BrandCarousel"
+import WaitlistAlert from "@web/components/WaitlistAlert"
 import { createUserWithEmail, signInWithEmail, signInWithGoogle, useMustNotBeSignedIn } from "@web/modules/firebase/auth"
 import Link from "next/link"
 import { useRouter } from "next/router"
-import { useEffect } from "react"
 import { useState } from "react"
 import { FcGoogle } from "react-icons/fc"
 import { useMutation } from "react-query"
@@ -62,22 +62,13 @@ export default function LoginPage() {
         emailMut.mutate(values)
     }
 
-    useEffect(() => {
-        notifications.show({
-            title: "We're accepting waitlisters!",
-            message: "Sign in to automatically join the waitlist.",
-            id: "waitlist-notification",
-            autoClose: false,
-            icon: "👋",
-            color: "pg.2",
-        })
-    }, [])
-
     return (
-        <div className="flex h-screen max-h-screen w-screen items-stretch">
-            <Center className="p-xl max-w-sm grow">
+        <div className="flex h-screen max-h-screen w-screen items-stretch flex-col-reverse md:flex-row">
+            <Center className="p-xl max-w-sm grow mx-auto">
                 <form onSubmit={form.onSubmit(handleFormSubmit)}>
                     <Stack>
+                        <WaitlistAlert />
+
                         <Title order={2} className="text-center mb-xl">
                             Welcome to WoahAuth
                         </Title>
