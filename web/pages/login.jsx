@@ -63,7 +63,7 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="flex h-screen max-h-screen w-screen items-stretch flex-col-reverse md:flex-row">
+        <div className="flex min-h-screen w-screen items-stretch flex-col-reverse md:flex-row">
             <Center className="p-xl max-w-sm grow mx-auto">
                 <form onSubmit={form.onSubmit(handleFormSubmit)}>
                     <Stack>
