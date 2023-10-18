@@ -4,6 +4,7 @@ import { notifications } from "@mantine/notifications"
 import BrandCarousel from "@web/components/BrandCarousel"
 import WaitlistAlert from "@web/components/WaitlistAlert"
 import { createUserWithEmail, signInWithEmail, signInWithGoogle, useMustNotBeSignedIn } from "@web/modules/firebase/auth"
+import { useIsMobile } from "@web/modules/util"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useState } from "react"
@@ -15,6 +16,7 @@ export default function LoginPage() {
 
     useMustNotBeSignedIn()
 
+    const isMobile = useIsMobile()
     const router = useRouter()
     const [formError, setFormError] = useState()
     const isRegistering = router.query.register !== undefined
@@ -84,11 +86,13 @@ export default function LoginPage() {
                             label="Email" placeholder="mark@facebook.com"
                             {...form.getInputProps("email")}
                             disabled={googleMut.isLoading || emailMut.isLoading}
+                            size={isMobile ? "md" : "sm"}
                         />
                         <PasswordInput
                             label="Password" placeholder="123"
                             {...form.getInputProps("password")}
                             disabled={googleMut.isLoading || emailMut.isLoading}
+                            size={isMobile ? "md" : "sm"}
                         />
 
                         {formError &&
