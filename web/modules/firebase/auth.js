@@ -14,6 +14,7 @@ export async function signInWithGoogle() {
         })
 }
 
+
 export async function signInWithEmail(email, password) {
     return signInWithEmailAndPassword(fire.auth, email, password)
         .then(userCredential => {
@@ -30,6 +31,7 @@ export async function createUserWithEmail(email, password) {
         })
 }
 
+
 export async function signOut() {
     await _signOut(fire.auth)
     console.debug("Logged out")
@@ -44,6 +46,8 @@ export function useMustBeSignedIn(redirect = "/login") {
         if (hasEmitted && !user && redirect)
             router.push(redirect)
     }, [user?.uid, hasEmitted, redirect])
+
+    return user
 }
 
 
