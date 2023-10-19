@@ -9,6 +9,7 @@ import { Services, useCurrentServiceClient, useServiceClientAccounts } from "@we
 import { useDocumentMutators, useFunctionMutation } from "@zachsents/fire-query"
 import classNames from "classnames"
 import { arrayRemove } from "firebase/firestore"
+import Head from "next/head"
 import { TbCheck, TbCode, TbCopy, TbDots, TbKey, TbLink, TbRefresh, TbSettings, TbTrash, TbUserCancel } from "react-icons/tb"
 import { useMutation } from "react-query"
 import { CONNECTED_ACCOUNTS_SUBCOLLECTION, SERVICE_CLIENTS_COLLECTION } from "shared/firestore"
@@ -18,7 +19,10 @@ export default function DashboardPage() {
 
     const { data: serviceClient, isLoading } = useCurrentServiceClient()
 
-    return (
+    return (<>
+        <Head>
+            <title>{serviceClient?.nickname || "Loading..."} | WoahAuth</title>
+        </Head>
         <DashboardShell>
             {!isLoading && serviceClient ?
                 <Inner /> :
@@ -26,7 +30,7 @@ export default function DashboardPage() {
                     <Loader variant="bars" />
                 </Center>}
         </DashboardShell>
-    )
+    </>)
 }
 
 function Inner() {
