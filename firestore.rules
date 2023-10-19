@@ -11,8 +11,11 @@ service cloud.firestore {
                 !request.resource.data.diff(resource.data).affectedKeys().hasAny(['owner', 'secretKey']);
 
             match /connected-accounts/{accountId} {
-                allow read: if request.auth != null && 
+                allow read, delete: if request.auth != null && 
                     request.auth.uid == get(/databases/$(database)/documents/service-clients/$(serviceClientId)).data.owner;
+                allow update: if request.auth != null && 
+                    request.auth.uid == get(/databases/$(database)/documents/service-clients/$(serviceClientId)).data.owner && 
+                    !request.resource.data.diff(resource.data).affectedKeys().hasAny(['accessToken', 'refreshToken', 'expiresAt', 'scopes', 'tokenType', 'updatedAt', 'idToken']);
             }
         }
 

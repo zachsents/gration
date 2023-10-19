@@ -2,7 +2,7 @@ import { ActionIcon, Divider, Group, Menu, NavLink, Stack, Text, TextInput } fro
 import { useHover } from "@mantine/hooks"
 import { signOut, useMustBeSignedIn } from "@web/modules/firebase/auth"
 import { useSearch } from "@web/modules/search"
-import { Services, useServiceClientUserCount, useServiceClients } from "@web/modules/service-clients"
+import { Services, useServiceClientAccountCount, useServiceClients } from "@web/modules/service-clients"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useRef } from "react"
@@ -83,7 +83,7 @@ function ServiceClientLink({ nickname, serviceId, id }) {
 
     const serviceType = Services.find(service => service.id === serviceId)
 
-    const userCount = useServiceClientUserCount(id)
+    const userCount = useServiceClientAccountCount(id)
 
     return (
         <NavLink
@@ -98,7 +98,7 @@ function ServiceClientLink({ nickname, serviceId, id }) {
                     </Text>
                     {userCount.isSuccess ? <>
                         <Text>&#x2022;</Text>
-                        <Text>{userCount.data} users</Text>
+                        <Text>{userCount.data} accounts</Text>
                     </> : null}
                 </Group>
             </div>}

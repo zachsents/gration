@@ -1,14 +1,17 @@
-import { Accordion, ActionIcon, Anchor, Button, Center, CopyButton, Group, Loader, Menu, Stack, Text, TextInput, Textarea, Timeline, Title, Tooltip } from "@mantine/core"
+import { Accordion, ActionIcon, Anchor, Button, Center, CopyButton, Group, Loader, Menu, Stack, Table, Text, TextInput, Textarea, Timeline, Title, Tooltip } from "@mantine/core"
 import { useForm } from "@mantine/form"
 import { useLocalStorage } from "@mantine/hooks"
 import DashboardShell from "@web/components/DashboardShell"
 import EditableText from "@web/components/EditableText"
 import HiddenOverlay from "@web/components/HiddenOverlay"
 import ScopesInput from "@web/components/ScopesInput"
-import { Services, useCurrentServiceClient } from "@web/modules/service-clients"
-import { useFunctionMutation } from "@zachsents/fire-query"
+import { Services, useCurrentServiceClient, useServiceClientAccounts } from "@web/modules/service-clients"
+import { useDocumentMutators, useFunctionMutation } from "@zachsents/fire-query"
 import classNames from "classnames"
-import { TbCheck, TbCopy, TbDots, TbLink, TbRefresh, TbTrash } from "react-icons/tb"
+import { arrayRemove } from "firebase/firestore"
+import { TbCheck, TbCode, TbCopy, TbDots, TbKey, TbLink, TbRefresh, TbSettings, TbTrash, TbUserCancel } from "react-icons/tb"
+import { useMutation } from "react-query"
+import { CONNECTED_ACCOUNTS_SUBCOLLECTION, SERVICE_CLIENTS_COLLECTION } from "shared/firestore"
 
 
 export default function DashboardPage() {
@@ -37,6 +40,7 @@ function Inner() {
             "secretKey",
             "gettingStarted",
             "oauthClientConfig",
+            "manageAccounts",
         ],
     })
 
@@ -64,6 +68,12 @@ function Inner() {
     const rollSecretKey = () => {
         rollSecretKeyMutation.mutate({ serviceClientId: serviceClient.id })
     }
+
+    const connectedAccounts = useServiceClientAccounts(serviceClient.id)
+
+    let timelineStep = 0
+    if (connectedAccounts.data?.length > 0)
+        timelineStep = 1
 
     return (
         <Stack className="p-xl gap-12">
@@ -104,37 +114,20 @@ function Inner() {
                 item: "border-none",
                 chevron: "text-gray",
             }}>
-                <Accordion.Item value="secretKey">
-                    <Accordion.Control>
-                        Secret Key
-                    </Accordion.Control>
-                    <Accordion.Panel>
-                        <Stack>
-                            <CopyableURL url={serviceClient.secretKey} className="flex-1" />
-                            <Group spacing="xs">
-                                <Button
-                                    leftIcon={<TbRefresh />} compact color="pg"
-                                    onClick={rollSecretKey} loading={rollSecretKeyMutation.isLoading}
-                                >
-                                    Roll Secret Key
-                                </Button>
-                            </Group>
-                        </Stack>
-                    </Accordion.Panel>
-                </Accordion.Item>
-
                 <Accordion.Item value="gettingStarted">
                     <Accordion.Control>
                         Getting Started
                     </Accordion.Control>
                     <Accordion.Panel>
-                        <Timeline active={1}>
-                            <Timeline.Item bullet={<TbLink />} title="Add WoahAuth redirect URL to OAuth client">
+                        <Timeline active={timelineStep}>
+                            <Timeline.Item bullet={<TbSettings />} title="Add WoahAuth redirect URL to OAuth client">
                                 <Stack align="flex-start" spacing="xs">
                                     <Text className="text-gray text-sm">
                                         In {serviceType.dashboardName || serviceType.name}, add the following redirect URL to your OAuth client:
                                     </Text>
-                                    <CopyableURL url={redirectUrl} />
+                                    <CopyableMono>
+                                        {redirectUrl}
+                                    </CopyableMono>
                                 </Stack>
                             </Timeline.Item>
 
@@ -143,10 +136,46 @@ function Inner() {
                                     <Text className="text-gray text-sm">
                                         Link users to the following URL to authorize their {serviceType.name} account:
                                     </Text>
-                                    <CopyableURL url={authorizeUrl} />
+                                    <CopyableMono>
+                                        {authorizeUrl}
+                                    </CopyableMono>
+                                </Stack>
+                            </Timeline.Item>
+
+                            <Timeline.Item bullet={<TbCode />} title="Request an access token with the WoahAuth API">
+                                <Stack align="flex-start" spacing="xs">
+                                    <Text className="text-gray text-sm">
+                                        Use the following code to fetch an access token for a user and make a request with it:
+                                    </Text>
+                                    {/* <Code block className="">
+                                        hey man
+                                    </Code> */}
                                 </Stack>
                             </Timeline.Item>
                         </Timeline>
+                    </Accordion.Panel>
+                </Accordion.Item>
+
+                <Accordion.Item value="secretKey">
+                    <Accordion.Control>
+                        Secret Key
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                        <Stack>
+                            <CopyableMono breakAnywhere>
+                                {serviceClient.secretKey}
+                            </CopyableMono>
+                            <Group spacing="xs">
+                                <Tooltip label="WARNING: this will make the current secret key invalid.">
+                                    <Button
+                                        leftIcon={<TbRefresh />} compact color="pg"
+                                        onClick={rollSecretKey} loading={rollSecretKeyMutation.isLoading}
+                                    >
+                                        Roll Secret Key
+                                    </Button>
+                                </Tooltip>
+                            </Group>
+                        </Stack>
                     </Accordion.Panel>
                 </Accordion.Item>
 
@@ -202,15 +231,41 @@ function Inner() {
                         </form>
                     </Accordion.Panel>
                 </Accordion.Item>
+
+                <Accordion.Item value="manageAccounts">
+                    <Accordion.Control>
+                        Manage Accounts
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                        <Table>
+                            <thead>
+                                <tr>
+                                    <th>Account ID</th>
+                                    <th>Associated User IDs</th>
+                                    <th className="w-1/4">Access Token</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {connectedAccounts.data?.map(account =>
+                                    <AccountRow
+                                        account={account} serviceClientId={serviceClient.id} serviceClientSecretKey={serviceClient.secretKey}
+                                        key={account.id}
+                                    />
+                                )}
+                            </tbody>
+                        </Table>
+                    </Accordion.Panel>
+                </Accordion.Item>
             </Accordion>
         </Stack>
     )
 }
 
 
-function CopyableURL({ url, className }) {
+function CopyableMono({ children, className, breakAnywhere = false, lineClamp }) {
     return (
-        <CopyButton value={url}>
+        <CopyButton value={children}>
             {({ copied, copy }) => (
                 <Tooltip label="Click to copy">
                     <Group
@@ -221,10 +276,102 @@ function CopyableURL({ url, className }) {
                         {copied ?
                             <TbCheck className="text-green" /> :
                             <TbCopy className="text-gray" />}
-                        <Text className="font-mono">{url}</Text>
+                        <Text className={classNames("flex-1 font-mono", {
+                            "break-all": breakAnywhere,
+                        })} lineClamp={lineClamp}>{children}</Text>
                     </Group>
                 </Tooltip>
             )}
         </CopyButton>
+    )
+}
+
+
+function AccountRow({ account, serviceClientId, serviceClientSecretKey }) {
+
+    const { update, delete: _deleteAccount } = useDocumentMutators([SERVICE_CLIENTS_COLLECTION, serviceClientId, CONNECTED_ACCOUNTS_SUBCOLLECTION, account.id])
+
+    const deleteAccount = () => {
+        _deleteAccount.mutate()
+    }
+
+    const removeAllUsers = () => {
+        update.mutate({ appUsers: [] })
+    }
+
+    const removeUser = userId => {
+        update.mutate({ appUsers: arrayRemove(userId) })
+    }
+
+    const accessTokenMutation = useMutation({
+        mutationFn: async () => {
+            const headers = new Headers()
+            headers.append("Authorization", `Bearer ${serviceClientSecretKey}`)
+            const res = await fetch(`http://127.0.0.1:5001/gration-f5cd8/us-central1/api/serviceClient/aRgMiBgrS2LyeUUn44p6/getTokenForAccount/${account.id}`, {
+                headers,
+            })
+            return res.json()
+        },
+    })
+
+    return (
+        <tr className={classNames({
+            "bg-gray-200": _deleteAccount.isLoading || update.isLoading,
+        })}>
+            <td>{account.id}</td>
+            <td>{account.appUsers.map(userId =>
+                <Menu position="bottom" shadow="xs" key={userId}>
+                    <Menu.Target>
+                        <Button
+                            compact size="xs" variant="subtle"
+                            className="font-normal rounded-full"
+                        >
+                            {userId}
+                        </Button>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                        <Menu.Item icon={<TbUserCancel />} onClick={() => removeUser(userId)}>
+                            Remove User
+                        </Menu.Item>
+                    </Menu.Dropdown>
+                </Menu>
+            )}</td>
+            <td>
+                {accessTokenMutation.data ?
+                    <CopyableMono breakAnywhere lineClamp={1}>
+                        {accessTokenMutation.data.accessToken}
+                    </CopyableMono> :
+                    <Button
+                        compact color="pg" variant="light" leftIcon={<TbKey />}
+                        loading={accessTokenMutation.isLoading}
+                        onClick={accessTokenMutation.mutate}
+                    >
+                        Access Token
+                    </Button>}
+            </td>
+            <td className="w-[0.1%]">
+                <Menu position="bottom-end" shadow="md">
+                    <Menu.Target>
+                        <ActionIcon>
+                            <TbDots />
+                        </ActionIcon>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                        <Menu.Item
+                            icon={<TbUserCancel />} color="red"
+                            onClick={removeAllUsers}
+                        >
+                            Remove All Users
+                        </Menu.Item>
+                        <Menu.Item
+                            icon={<TbTrash />} color="red"
+                            onClick={deleteAccount}
+                        >
+                            Delete Account
+                        </Menu.Item>
+                    </Menu.Dropdown>
+                </Menu>
+            </td>
+        </tr>
     )
 }

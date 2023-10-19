@@ -25,10 +25,15 @@ export function useCurrentServiceClient() {
 }
 
 
-export function useServiceClientUserCount(id) {
+export function useServiceClientAccountCount(id) {
     return useCollectionQuery([SERVICE_CLIENTS_COLLECTION, id, CONNECTED_ACCOUNTS_SUBCOLLECTION], undefined, {
         aggregation: "count",
     })
+}
+
+
+export function useServiceClientAccounts(id) {
+    return useCollectionQuery([SERVICE_CLIENTS_COLLECTION, id, CONNECTED_ACCOUNTS_SUBCOLLECTION])
 }
 
 
