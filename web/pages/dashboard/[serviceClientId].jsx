@@ -1,11 +1,12 @@
-import { Accordion, ActionIcon, Anchor, Button, Center, CopyButton, Group, Loader, Menu, Stack, Table, Text, TextInput, Textarea, Timeline, Title, Tooltip } from "@mantine/core"
+import { Accordion, ActionIcon, Button, Center, CopyButton, Group, Loader, Menu, Stack, Table, Text, Timeline, Title, Tooltip } from "@mantine/core"
 import { useForm } from "@mantine/form"
 import { useLocalStorage } from "@mantine/hooks"
 import { Prism } from "@mantine/prism"
 import DashboardShell from "@web/components/DashboardShell"
 import EditableText from "@web/components/EditableText"
-import HiddenOverlay from "@web/components/HiddenOverlay"
-import ScopesInput from "@web/components/ScopesInput"
+import OAuthClientIdInput from "@web/components/OAuthClientIDInput"
+import OAuthClientScopesInput from "@web/components/OAuthClientScopesInput"
+import OAuthClientSecretInput from "@web/components/OAuthClientSecretInput"
 import { Services, useCurrentServiceClient, useServiceClientAccounts } from "@web/modules/service-clients"
 import { useDocumentMutators, useFunctionMutation } from "@zachsents/fire-query"
 import classNames from "classnames"
@@ -67,7 +68,8 @@ function Inner() {
     }
 
     const redirectUrl = `https://woahauth.com/oauth/callback/${serviceClient.id}`
-    const authorizeUrl = <>https://woahauth.com/oauth/authorize/{serviceClient.id}?user=<span className="text-gray">[YOUR_USERS_ID]</span></>
+    const authorizeUrlDisplay = <>https://woahauth.com/oauth/authorize/{serviceClient.id}?user=<span className="text-gray">[YOUR_USERS_ID]</span></>
+    const authorizeUrlCopy = `https://woahauth.com/oauth/authorize/${serviceClient.id}?user=`
 
     const rollSecretKeyMutation = useFunctionMutation("RollOAuth2SecretKey")
     const rollSecretKey = () => {
@@ -161,8 +163,8 @@ function Inner() {
                                     <Text className="text-gray text-sm">
                                         Link users to the following URL to authorize their {serviceType.name} account:
                                     </Text>
-                                    <CopyableMono>
-                                        {authorizeUrl}
+                                    <CopyableMono value={authorizeUrlCopy}>
+                                        {authorizeUrlDisplay}
                                     </CopyableMono>
                                 </Stack>
                             </Timeline.Item>
@@ -205,37 +207,19 @@ function Inner() {
                                         </Button>
                                     </Group>}
 
-                                <div>
-                                    <Text className="text-sm">OAuth Client ID</Text>
-                                    <Text className="text-xs text-gray mb-1">
-                                        Paste in your OAuth client ID from {serviceType.dashboardName || serviceType.name}
-                                    </Text>
-                                    <TextInput
-                                        {...form.getInputProps("clientId")}
-                                    />
-                                </div>
-                                <div>
-                                    <Text className="text-sm">OAuth Client Secret</Text>
-                                    <Text className="text-xs text-gray mb-1">
-                                        Paste in your OAuth client secret from {serviceType.dashboardName || serviceType.name}
-                                    </Text>
-                                    <HiddenOverlay className="rounded-md base-border">
-                                        <Textarea
-                                            {...form.getInputProps("clientSecret")}
-                                            autosize minRows={3} maxRows={6}
-                                        />
-                                    </HiddenOverlay>
-                                </div>
-                                <div>
-                                    <Text className="text-sm">Requested Scopes</Text>
-                                    <Text className="text-xs text-gray mb-1">
-                                        You can find a <Anchor href={serviceType.scopesListUrl} target="_blank">full list of scopes here.</Anchor>
-                                    </Text>
-                                    <ScopesInput
-                                        data={serviceType.scopesList}
-                                        {...form.getInputProps("scopes")}
-                                    />
-                                </div>
+
+                                <OAuthClientIdInput
+                                    sourceName={serviceType.dashboardName || serviceType.name}
+                                    {...form.getInputProps("clientId")}
+                                />
+                                <OAuthClientSecretInput
+                                    sourceName={serviceType.dashboardName || serviceType.name} withOverlay
+                                    {...form.getInputProps("clientSecret")}
+                                />
+                                <OAuthClientScopesInput
+                                    scopesListUrl={serviceType.scopesListUrl} scopesList={serviceType.scopesList}
+                                    {...form.getInputProps("scopes")}
+                                />
                             </Stack>
                         </form>
                     </Accordion.Panel>
@@ -272,9 +256,9 @@ function Inner() {
 }
 
 
-function CopyableMono({ children, className, breakAnywhere = false, lineClamp }) {
+function CopyableMono({ children, value, className, breakAnywhere = false, lineClamp }) {
     return (
-        <CopyButton value={children}>
+        <CopyButton value={value ?? children}>
             {({ copied, copy }) => (
                 <Tooltip label="Click to copy">
                     <Group
@@ -316,7 +300,7 @@ function AccountRow({ account, serviceClientId, serviceClientSecretKey }) {
         mutationFn: async () => {
             const headers = new Headers()
             headers.append("Authorization", `Bearer ${serviceClientSecretKey}`)
-            const res = await fetch(`http://127.0.0.1:5001/gration-f5cd8/us-central1/api/serviceClient/aRgMiBgrS2LyeUUn44p6/getTokenForAccount/${account.id}`, {
+            const res = await fetch(`http://127.0.0.1:5001/gration-f5cd8/us-central1/api/serviceClient/${serviceClientId}/getTokenForAccount/${account.id}`, {
                 headers,
             })
             return res.json()

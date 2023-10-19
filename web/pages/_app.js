@@ -8,6 +8,7 @@ import { mantineTheme } from "@web/theme"
 import { QueryClient, QueryClientProvider } from "react-query"
 import { AuthProvider, FirebaseAppProvider, FirestoreProvider } from "reactfire"
 import { FirebaseProvider } from "@zachsents/fire-query"
+import CreateClientModal from "@web/components/CreateClientModal"
 
 
 const queryClient = new QueryClient()
@@ -38,6 +39,6 @@ export default function MyApp({ Component, pageProps }) {
 }
 
 const modals = {
-
+    "CreateClient": CreateClientModal,
 }
 

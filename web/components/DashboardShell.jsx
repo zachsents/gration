@@ -1,5 +1,6 @@
 import { ActionIcon, Divider, Group, Menu, NavLink, Stack, Text, TextInput } from "@mantine/core"
 import { useHover } from "@mantine/hooks"
+import { modals } from "@mantine/modals"
 import { signOut, useMustBeSignedIn } from "@web/modules/firebase/auth"
 import { useSearch } from "@web/modules/search"
 import { Services, useServiceClientAccountCount, useServiceClients } from "@web/modules/service-clients"
@@ -59,13 +60,21 @@ export default function DashboardShell({ children }) {
                     label="New Client" icon={<TbPlus />}
                     active
                     className="rounded-md font-bold mb-2 -mt-2"
+                    onClick={() => modals.openContextModal({
+                        modal: "CreateClient",
+                        title: "New Service Client",
+                        centered: true,
+                        size: "lg",
+                    })}
                 />
 
                 <SearchInput value={searchQuery} onChange={setSearchQuery} />
 
-                {filteredServiceClients?.map(client =>
-                    <ServiceClientLink {...client} key={client.id} />
-                )}
+                <Stack className="gap-1">
+                    {filteredServiceClients?.map(client =>
+                        <ServiceClientLink {...client} key={client.id} />
+                    )}
+                </Stack>
             </Stack>
 
             <div className="flex-1 min-w-0 bg-gray-50 rounded-lg">

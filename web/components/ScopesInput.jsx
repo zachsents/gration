@@ -15,20 +15,16 @@ export default function ScopesInput({ value, onChange, ...props }) {
 
     return (<>
         <Select
-            data={props.data || []}
-            limit={10}
-            placeholder="Search scopes"
+            data={props.data || []} limit={10}
+            placeholder="Search scopes" withinPortal
             searchable searchValue={searchValue} onSearchChange={setSearchValue}
-            creatable
-            onCreate={addScope}
-            getCreateLabel={query => `Add scope "${query}"`}
-            onChange={addScope}
-            value={null}
+            creatable onCreate={addScope} getCreateLabel={query => `Add scope "${query}"`}
+            value={null} onChange={addScope}
             {...props}
         />
         <Stack className="gap-0 mt-2">
             {value?.map(scope =>
-                <Group spacing="xs" key={scope}>
+                <Group spacing="xs" noWrap key={scope}>
                     <ActionIcon onClick={() => removeScope(scope)}>
                         <TbX className="text-sm" />
                     </ActionIcon>
