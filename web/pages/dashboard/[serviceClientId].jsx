@@ -5,6 +5,7 @@ import EditableText from "@web/components/EditableText"
 import HiddenOverlay from "@web/components/HiddenOverlay"
 import ScopesInput from "@web/components/ScopesInput"
 import { Services, useCurrentServiceClient } from "@web/modules/service-clients"
+import { useFunctionMutation } from "@zachsents/fire-query"
 import classNames from "classnames"
 import { TbCheck, TbCopy, TbDots, TbLink, TbRefresh, TbTrash } from "react-icons/tb"
 
@@ -47,7 +48,12 @@ function Inner() {
     }
 
     const redirectUrl = `https://woahauth.com/oauth/callback/${serviceClient.id}`
-    const authorizeUrl = `https://woahauth.com/oauth/authorize/${serviceClient.id}`
+    const authorizeUrl = <>https://woahauth.com/oauth/authorize/{serviceClient.id}?user=<span className="text-gray">[YOUR_USERS_ID]</span></>
+
+    const rollSecretKeyMutation = useFunctionMutation("RollOAuth2SecretKey")
+    const rollSecretKey = () => {
+        rollSecretKeyMutation.mutate({ serviceClientId: serviceClient.id })
+    }
 
     return (
         <Stack className="p-xl gap-12">
@@ -70,7 +76,12 @@ function Inner() {
                         </ActionIcon>
                     </Menu.Target>
                     <Menu.Dropdown miw="12rem">
-                        <Menu.Item icon={<TbRefresh />}>Roll Secret Key</Menu.Item>
+                        <Menu.Item
+                            icon={<TbRefresh />}
+                            onClick={rollSecretKey} disabled={rollSecretKeyMutation.isLoading}
+                        >
+                            Roll Secret Key
+                        </Menu.Item>
                         <Menu.Item icon={<TbTrash />} color="red">Delete Client</Menu.Item>
                     </Menu.Dropdown>
                 </Menu>
@@ -86,7 +97,10 @@ function Inner() {
 
                 <CopyableURL url={serviceClient.secretKey} className="flex-1" />
                 <Group spacing="xs">
-                    <Button leftIcon={<TbRefresh />} compact color="pg">
+                    <Button
+                        leftIcon={<TbRefresh />} compact color="pg"
+                        onClick={rollSecretKey} loading={rollSecretKeyMutation.isLoading}
+                    >
                         Roll Secret Key
                     </Button>
                 </Group>
@@ -184,6 +198,7 @@ function CopyableURL({ url, className }) {
             {({ copied, copy }) => (
                 <Tooltip label="Click to copy">
                     <Group
+                        noWrap
                         className={classNames("bg-gray-200 rounded-md py-1 px-xs text-sm cursor-pointer hover:bg-gray-300", className)}
                         onClick={copy}
                     >

@@ -19,7 +19,7 @@ export default function MyApp({ Component, pageProps }) {
             <AuthProvider sdk={fire.auth}>
                 <FirestoreProvider sdk={fire.db}>
                     <QueryClientProvider client={queryClient}>
-                        <FirebaseProvider firestore={fire.db}>
+                        <FirebaseProvider firestore={fire.db} functions={fire.functions}>
                             <MantineProvider theme={mantineTheme} withNormalizeCSS withGlobalStyles withCSSVariables>
                                 <ModalsProvider modals={modals}>
                                     {/* This wrapper makes the footer stick to the bottom of the page */}
