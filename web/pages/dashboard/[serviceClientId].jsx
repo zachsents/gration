@@ -1,6 +1,7 @@
 import { Accordion, ActionIcon, Anchor, Button, Center, CopyButton, Group, Loader, Menu, Stack, Table, Text, TextInput, Textarea, Timeline, Title, Tooltip } from "@mantine/core"
 import { useForm } from "@mantine/form"
 import { useLocalStorage } from "@mantine/hooks"
+import { Prism } from "@mantine/prism"
 import DashboardShell from "@web/components/DashboardShell"
 import EditableText from "@web/components/EditableText"
 import HiddenOverlay from "@web/components/HiddenOverlay"
@@ -10,7 +11,7 @@ import { useDocumentMutators, useFunctionMutation } from "@zachsents/fire-query"
 import classNames from "classnames"
 import { arrayRemove } from "firebase/firestore"
 import Head from "next/head"
-import { TbCheck, TbCode, TbCopy, TbDots, TbKey, TbLink, TbRefresh, TbSettings, TbTrash, TbUserCancel } from "react-icons/tb"
+import { TbCheck, TbCode, TbCopy, TbDots, TbKey, TbLink, TbRefresh, TbSettings, TbTrash, TbUserCancel, TbUsers } from "react-icons/tb"
 import { useMutation } from "react-query"
 import { CONNECTED_ACCOUNTS_SUBCOLLECTION, SERVICE_CLIENTS_COLLECTION } from "shared/firestore"
 
@@ -75,10 +76,6 @@ function Inner() {
 
     const connectedAccounts = useServiceClientAccounts(serviceClient.id)
 
-    let timelineStep = 0
-    if (connectedAccounts.data?.length > 0)
-        timelineStep = 1
-
     return (
         <Stack className="p-xl gap-12">
             <Group position="apart" className="-mb-xl">
@@ -118,48 +115,6 @@ function Inner() {
                 item: "border-none",
                 chevron: "text-gray",
             }}>
-                <Accordion.Item value="gettingStarted">
-                    <Accordion.Control>
-                        Getting Started
-                    </Accordion.Control>
-                    <Accordion.Panel>
-                        <Timeline active={timelineStep}>
-                            <Timeline.Item bullet={<TbSettings />} title="Add WoahAuth redirect URL to OAuth client">
-                                <Stack align="flex-start" spacing="xs">
-                                    <Text className="text-gray text-sm">
-                                        In {serviceType.dashboardName || serviceType.name}, add the following redirect URL to your OAuth client:
-                                    </Text>
-                                    <CopyableMono>
-                                        {redirectUrl}
-                                    </CopyableMono>
-                                </Stack>
-                            </Timeline.Item>
-
-                            <Timeline.Item bullet={<TbLink />} title="Authorize users with this link">
-                                <Stack align="flex-start" spacing="xs">
-                                    <Text className="text-gray text-sm">
-                                        Link users to the following URL to authorize their {serviceType.name} account:
-                                    </Text>
-                                    <CopyableMono>
-                                        {authorizeUrl}
-                                    </CopyableMono>
-                                </Stack>
-                            </Timeline.Item>
-
-                            <Timeline.Item bullet={<TbCode />} title="Request an access token with the WoahAuth API">
-                                <Stack align="flex-start" spacing="xs">
-                                    <Text className="text-gray text-sm">
-                                        Use the following code to fetch an access token for a user and make a request with it:
-                                    </Text>
-                                    {/* <Code block className="">
-                                        hey man
-                                    </Code> */}
-                                </Stack>
-                            </Timeline.Item>
-                        </Timeline>
-                    </Accordion.Panel>
-                </Accordion.Item>
-
                 <Accordion.Item value="secretKey">
                     <Accordion.Control>
                         Secret Key
@@ -180,6 +135,55 @@ function Inner() {
                                 </Tooltip>
                             </Group>
                         </Stack>
+                    </Accordion.Panel>
+                </Accordion.Item>
+
+                <Accordion.Item value="gettingStarted">
+                    <Accordion.Control>
+                        Getting Started
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                        <Timeline active={-1}>
+                            <Timeline.Item bullet={<TbSettings />} title="1. Add WoahAuth redirect URL to OAuth client">
+                                <Stack align="flex-start" spacing="xs">
+                                    <Text className="text-gray text-sm">
+                                        In {serviceType.dashboardName || serviceType.name}, add the following redirect URL to your OAuth client:
+                                    </Text>
+                                    <CopyableMono>
+                                        {redirectUrl}
+                                    </CopyableMono>
+                                </Stack>
+                            </Timeline.Item>
+
+                            <Timeline.Item bullet={<TbLink />} title="2. Authorize users with this link">
+                                <Stack align="flex-start" spacing="xs">
+                                    <Text className="text-gray text-sm">
+                                        Link users to the following URL to authorize their {serviceType.name} account:
+                                    </Text>
+                                    <CopyableMono>
+                                        {authorizeUrl}
+                                    </CopyableMono>
+                                </Stack>
+                            </Timeline.Item>
+
+                            <Timeline.Item bullet={<TbUsers />} title="3. List a user's connected accounts using the WoahAuth API">
+                                <Stack align="flex-start" spacing="xs">
+                                    <Text className="text-gray text-sm">
+                                        Use the following code to list a user's connected accounts:
+                                    </Text>
+                                    <Prism language="js" colorScheme="dark" className="self-stretch">{listUsersCodeSample(serviceClient.id)}</Prism>
+                                </Stack>
+                            </Timeline.Item>
+
+                            <Timeline.Item bullet={<TbCode />} title="4. Get a fresh access token using the WoahAuth API">
+                                <Stack align="flex-start" spacing="xs">
+                                    <Text className="text-gray text-sm">
+                                        Use the following code to get a fresh access token for a connected account:
+                                    </Text>
+                                    <Prism language="js" colorScheme="dark" className="self-stretch">{getTokenCodeSample(serviceClient.id)}</Prism>
+                                </Stack>
+                            </Timeline.Item>
+                        </Timeline>
                     </Accordion.Panel>
                 </Accordion.Item>
 
@@ -379,3 +383,38 @@ function AccountRow({ account, serviceClientId, serviceClientSecretKey }) {
         </tr>
     )
 }
+
+
+
+const listUsersCodeSample = (serviceClientId) =>
+    `const yourUsersId = "YOUR_USERS_ID"
+const url = "https://woahauth.com/api/serviceClient/${serviceClientId}/listAccountsForUser/" + yourUsersId
+
+const connectedAccountIds = await fetch(url, {
+    headers: {
+        // Do not expose your secret key in the frontend!
+        "Authorization": "Bearer " + process.env.WOAHAUTH_SERVICE_CLIENT_SECRET_KEY,
+    }
+}).then(res => res.json())
+
+/*
+    Result:
+    ["mark@facebook.com", "mark2@facebook.com", "zuck@facebook.com"]
+*/`
+
+
+const getTokenCodeSample = (serviceClientId) =>
+    `const connectedAccountId = "connected_account_id_from_the_last_step"
+const url = "https://woahauth.com/api/serviceClient/${serviceClientId}/getTokenForAccount/" + connectedAccountId
+
+const tokenInfo = await fetch(url, {
+    headers: {
+        // Do not expose your secret key in the frontend!
+        "Authorization": "Bearer " + process.env.WOAHAUTH_SERVICE_CLIENT_SECRET_KEY,
+    }
+}).then(res => res.json())
+
+/*
+    Result:
+    { accessToken: "ya29...", expiresAt: "${new Date(Date.now() + 60 * 60 * 1000).toISOString()}" }
+*/`
