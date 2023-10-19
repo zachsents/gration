@@ -1,6 +1,6 @@
 import { useUser } from "reactfire"
 import { useCollectionQuery, useDocument } from "@zachsents/fire-query"
-import { SERVICE_CLIENTS_COLLECTION } from "shared/firestore"
+import { CONNECTED_ACCOUNTS_SUBCOLLECTION, SERVICE_CLIENTS_COLLECTION } from "shared/firestore"
 import { where } from "firebase/firestore"
 import { TbBrandAirtable, TbBrandAsana, TbBrandAzure, TbBrandBitbucket, TbBrandFacebook, TbBrandGithub, TbBrandGitlab, TbBrandGmail, TbBrandGoogle, TbBrandGoogleDrive, TbBrandSlack, TbBrandStripe, TbBrandTrello, TbBrandX, TbBrandZoom, TbForms, TbTable } from "react-icons/tb"
 import { useRouter } from "next/router"
@@ -22,6 +22,13 @@ export function useServiceClient(id) {
 export function useCurrentServiceClient() {
     const router = useRouter()
     return useServiceClient(router.query.serviceClientId)
+}
+
+
+export function useServiceClientUserCount(id) {
+    return useCollectionQuery([SERVICE_CLIENTS_COLLECTION, id, CONNECTED_ACCOUNTS_SUBCOLLECTION], undefined, {
+        aggregation: "count",
+    })
 }
 
 

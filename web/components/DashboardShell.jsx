@@ -1,8 +1,8 @@
-import { ActionIcon, Divider, Menu, NavLink, Stack, Text, TextInput } from "@mantine/core"
+import { ActionIcon, Divider, Group, Menu, NavLink, Stack, Text, TextInput } from "@mantine/core"
 import { useHover } from "@mantine/hooks"
 import { signOut, useMustBeSignedIn } from "@web/modules/firebase/auth"
 import { useSearch } from "@web/modules/search"
-import { Services, useServiceClients } from "@web/modules/service-clients"
+import { Services, useServiceClientUserCount, useServiceClients } from "@web/modules/service-clients"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useRef } from "react"
@@ -83,6 +83,8 @@ function ServiceClientLink({ nickname, serviceId, id }) {
 
     const serviceType = Services.find(service => service.id === serviceId)
 
+    const userCount = useServiceClientUserCount(id)
+
     return (
         <NavLink
             icon={<serviceType.icon />}
@@ -90,7 +92,15 @@ function ServiceClientLink({ nickname, serviceId, id }) {
                 {nickname ?
                     <Text>{nickname}</Text> :
                     <Text className="text-gray">Untitled Client</Text>}
-                <Text className="text-xs text-gray">{serviceType.name}</Text>
+                <Group className="gap-1 text-xs text-gray">
+                    <Text>
+                        {serviceType.name}
+                    </Text>
+                    {userCount.isSuccess ? <>
+                        <Text>&#x2022;</Text>
+                        <Text>{userCount.data} users</Text>
+                    </> : null}
+                </Group>
             </div>}
             active={isActive} color="pg"
             className="rounded-md"
