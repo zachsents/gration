@@ -1,5 +1,6 @@
-import { ActionIcon, Anchor, Button, Center, CopyButton, Divider, Group, Loader, Menu, Stack, Text, TextInput, Textarea, Timeline, Title, Tooltip } from "@mantine/core"
+import { Accordion, ActionIcon, Anchor, Button, Center, CopyButton, Group, Loader, Menu, Stack, Text, TextInput, Textarea, Timeline, Title, Tooltip } from "@mantine/core"
 import { useForm } from "@mantine/form"
+import { useLocalStorage } from "@mantine/hooks"
 import DashboardShell from "@web/components/DashboardShell"
 import EditableText from "@web/components/EditableText"
 import HiddenOverlay from "@web/components/HiddenOverlay"
@@ -29,6 +30,15 @@ function Inner() {
 
     const { data: serviceClient, update } = useCurrentServiceClient()
     const serviceType = Services.find(service => service.id === serviceClient.serviceId)
+
+    const [accordionValue, setAccordionValue] = useLocalStorage({
+        key: "serviceClientConfigDashboardAccordion",
+        defaultValue: [
+            "secretKey",
+            "gettingStarted",
+            "oauthClientConfig",
+        ],
+    })
 
     const form = useForm({
         initialValues: {
@@ -87,106 +97,112 @@ function Inner() {
                 </Menu>
             </Group>
 
-            <Stack>
-                <div>
-                    <Divider />
-                    <Text className="uppercase font-bold text-gray text-xs mt-1">
+            <Accordion multiple value={accordionValue} onChange={setAccordionValue} classNames={{
+                label: "text-gray uppercase font-bold text-xs py-2",
+                control: "p-0 border-solid border-0 border-t-1 border-gray-400",
+                content: "p-0 pt-2 pb-12",
+                item: "border-none",
+                chevron: "text-gray",
+            }}>
+                <Accordion.Item value="secretKey">
+                    <Accordion.Control>
                         Secret Key
-                    </Text>
-                </div>
-
-                <CopyableURL url={serviceClient.secretKey} className="flex-1" />
-                <Group spacing="xs">
-                    <Button
-                        leftIcon={<TbRefresh />} compact color="pg"
-                        onClick={rollSecretKey} loading={rollSecretKeyMutation.isLoading}
-                    >
-                        Roll Secret Key
-                    </Button>
-                </Group>
-            </Stack>
-
-            <Stack>
-                <div>
-                    <Divider />
-                    <Text className="uppercase font-bold text-gray text-xs mt-1">
-                        Getting Started
-                    </Text>
-                </div>
-
-                <Timeline active={1}>
-                    <Timeline.Item bullet={<TbLink />} title="Add WoahAuth redirect URL to OAuth client">
-                        <Stack align="flex-start" spacing="xs">
-                            <Text className="text-gray text-sm">
-                                In {serviceType.dashboardName || serviceType.name}, add the following redirect URL to your OAuth client:
-                            </Text>
-                            <CopyableURL url={redirectUrl} />
-                        </Stack>
-                    </Timeline.Item>
-
-                    <Timeline.Item bullet={<TbLink />} title="Authorize users with this link">
-                        <Stack align="flex-start" spacing="xs">
-                            <Text className="text-gray text-sm">
-                                Link users to the following URL to authorize their {serviceType.name} account:
-                            </Text>
-                            <CopyableURL url={authorizeUrl} />
-                        </Stack>
-                    </Timeline.Item>
-                </Timeline>
-            </Stack>
-
-            <form onSubmit={form.onSubmit(handleSubmit)}>
-                <Stack>
-                    <div>
-                        <Divider
-                            label={form.isDirty() && <Group className="gap-2">
-                                <Button compact type="submit" color="pg">Save Changes</Button>
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                        <Stack>
+                            <CopyableURL url={serviceClient.secretKey} className="flex-1" />
+                            <Group spacing="xs">
                                 <Button
-                                    compact type="submit" variant="subtle" color="red"
-                                    onClick={form.reset}>
-                                    Discard
+                                    leftIcon={<TbRefresh />} compact color="pg"
+                                    onClick={rollSecretKey} loading={rollSecretKeyMutation.isLoading}
+                                >
+                                    Roll Secret Key
                                 </Button>
-                            </Group>}
-                            labelPosition="right"
-                        />
-                        <Text className="uppercase font-bold text-gray text-xs mt-1">
-                            OAuth Client Configuration
-                        </Text>
-                    </div>
+                            </Group>
+                        </Stack>
+                    </Accordion.Panel>
+                </Accordion.Item>
 
-                    <div>
-                        <Text className="text-sm">OAuth Client ID</Text>
-                        <Text className="text-xs text-gray mb-1">
-                            Paste in your OAuth client ID from {serviceType.dashboardName || serviceType.name}
-                        </Text>
-                        <TextInput
-                            {...form.getInputProps("clientId")}
-                        />
-                    </div>
-                    <div>
-                        <Text className="text-sm">OAuth Client Secret</Text>
-                        <Text className="text-xs text-gray mb-1">
-                            Paste in your OAuth client secret from {serviceType.dashboardName || serviceType.name}
-                        </Text>
-                        <HiddenOverlay className="rounded-md base-border">
-                            <Textarea
-                                {...form.getInputProps("clientSecret")}
-                                autosize minRows={3} maxRows={6}
-                            />
-                        </HiddenOverlay>
-                    </div>
-                    <div>
-                        <Text className="text-sm">Requested Scopes</Text>
-                        <Text className="text-xs text-gray mb-1">
-                            You can find a <Anchor href={serviceType.scopesListUrl} target="_blank">full list of scopes here.</Anchor>
-                        </Text>
-                        <ScopesInput
-                            data={serviceType.scopesList}
-                            {...form.getInputProps("scopes")}
-                        />
-                    </div>
-                </Stack>
-            </form>
+                <Accordion.Item value="gettingStarted">
+                    <Accordion.Control>
+                        Getting Started
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                        <Timeline active={1}>
+                            <Timeline.Item bullet={<TbLink />} title="Add WoahAuth redirect URL to OAuth client">
+                                <Stack align="flex-start" spacing="xs">
+                                    <Text className="text-gray text-sm">
+                                        In {serviceType.dashboardName || serviceType.name}, add the following redirect URL to your OAuth client:
+                                    </Text>
+                                    <CopyableURL url={redirectUrl} />
+                                </Stack>
+                            </Timeline.Item>
+
+                            <Timeline.Item bullet={<TbLink />} title="Authorize users with this link">
+                                <Stack align="flex-start" spacing="xs">
+                                    <Text className="text-gray text-sm">
+                                        Link users to the following URL to authorize their {serviceType.name} account:
+                                    </Text>
+                                    <CopyableURL url={authorizeUrl} />
+                                </Stack>
+                            </Timeline.Item>
+                        </Timeline>
+                    </Accordion.Panel>
+                </Accordion.Item>
+
+                <Accordion.Item value="oauthClientConfig">
+                    <Accordion.Control>
+                        OAuth Client Configuration
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                        <form onSubmit={form.onSubmit(handleSubmit)}>
+                            <Stack className="relative pt-md">
+                                {form.isDirty() &&
+                                    <Group className="gap-2 absolute top-0 right-0">
+                                        <Button compact type="submit" color="pg">Save Changes</Button>
+                                        <Button
+                                            compact type="submit" variant="subtle" color="red"
+                                            onClick={form.reset}>
+                                            Discard
+                                        </Button>
+                                    </Group>}
+
+                                <div>
+                                    <Text className="text-sm">OAuth Client ID</Text>
+                                    <Text className="text-xs text-gray mb-1">
+                                        Paste in your OAuth client ID from {serviceType.dashboardName || serviceType.name}
+                                    </Text>
+                                    <TextInput
+                                        {...form.getInputProps("clientId")}
+                                    />
+                                </div>
+                                <div>
+                                    <Text className="text-sm">OAuth Client Secret</Text>
+                                    <Text className="text-xs text-gray mb-1">
+                                        Paste in your OAuth client secret from {serviceType.dashboardName || serviceType.name}
+                                    </Text>
+                                    <HiddenOverlay className="rounded-md base-border">
+                                        <Textarea
+                                            {...form.getInputProps("clientSecret")}
+                                            autosize minRows={3} maxRows={6}
+                                        />
+                                    </HiddenOverlay>
+                                </div>
+                                <div>
+                                    <Text className="text-sm">Requested Scopes</Text>
+                                    <Text className="text-xs text-gray mb-1">
+                                        You can find a <Anchor href={serviceType.scopesListUrl} target="_blank">full list of scopes here.</Anchor>
+                                    </Text>
+                                    <ScopesInput
+                                        data={serviceType.scopesList}
+                                        {...form.getInputProps("scopes")}
+                                    />
+                                </div>
+                            </Stack>
+                        </form>
+                    </Accordion.Panel>
+                </Accordion.Item>
+            </Accordion>
         </Stack>
     )
 }
