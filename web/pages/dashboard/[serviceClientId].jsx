@@ -5,6 +5,7 @@ import EditableText from "@web/components/EditableText"
 import HiddenOverlay from "@web/components/HiddenOverlay"
 import ScopesInput from "@web/components/ScopesInput"
 import { Services, useCurrentServiceClient } from "@web/modules/service-clients"
+import classNames from "classnames"
 import { TbCheck, TbCopy, TbDots, TbLink, TbRefresh, TbTrash } from "react-icons/tb"
 
 
@@ -50,7 +51,7 @@ function Inner() {
 
     return (
         <Stack className="p-xl gap-12">
-            <Group position="apart">
+            <Group position="apart" className="-mb-xl">
                 <EditableText
                     value={serviceClient.nickname} onChange={nickname => update.mutate({ nickname })}
                     cancelOnClickOutside
@@ -62,7 +63,6 @@ function Inner() {
                         {update.isLoading && <Loader size="xs" />}
                     </Group>
                 </EditableText>
-
                 <Menu position="bottom-end" shadow="lg">
                     <Menu.Target>
                         <ActionIcon size="xl" className="bg-gray-100 hover:bg-gray-200">
@@ -75,6 +75,22 @@ function Inner() {
                     </Menu.Dropdown>
                 </Menu>
             </Group>
+
+            <Stack>
+                <div>
+                    <Divider />
+                    <Text className="uppercase font-bold text-gray text-xs mt-1">
+                        Secret Key
+                    </Text>
+                </div>
+
+                <CopyableURL url={serviceClient.secretKey} className="flex-1" />
+                <Group spacing="xs">
+                    <Button leftIcon={<TbRefresh />} compact color="pg">
+                        Roll Secret Key
+                    </Button>
+                </Group>
+            </Stack>
 
             <Stack>
                 <div>
@@ -162,13 +178,13 @@ function Inner() {
 }
 
 
-function CopyableURL({ url }) {
+function CopyableURL({ url, className }) {
     return (
         <CopyButton value={url}>
             {({ copied, copy }) => (
                 <Tooltip label="Click to copy">
                     <Group
-                        className="bg-gray-200 rounded-md py-1 px-xs text-sm cursor-pointer hover:bg-gray-300"
+                        className={classNames("bg-gray-200 rounded-md py-1 px-xs text-sm cursor-pointer hover:bg-gray-300", className)}
                         onClick={copy}
                     >
                         {copied ?
