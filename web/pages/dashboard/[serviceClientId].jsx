@@ -121,6 +121,7 @@ function Inner() {
                     </Accordion.Control>
                     <Accordion.Panel>
                         <Stack>
+                            <Text className="font-bold">⚠️ Do not expose your secret key on the frontend!</Text>
                             <CopyableMono breakAnywhere>
                                 {serviceClient.secretKey}
                             </CopyableMono>
