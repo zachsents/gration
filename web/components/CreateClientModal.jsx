@@ -5,9 +5,12 @@ import OAuthClientSecretInput from "./OAuthClientSecretInput"
 import OAuthClientScopesInput from "./OAuthClientScopesInput"
 import { Services } from "@web/modules/service-clients"
 import { useFunctionMutation } from "@zachsents/fire-query"
+import { useRouter } from "next/router"
 
 
 export default function CreateClientModal({ context, id }) {
+
+    const router = useRouter()
 
     const form = useForm({
         initialValues: {
@@ -27,7 +30,8 @@ export default function CreateClientModal({ context, id }) {
 
     const registerClientMutation = useFunctionMutation("RegisterOAuth2Client")
     const createClient = async values => {
-        await registerClientMutation.mutateAsync(values)
+        const { data: { serviceClientId } } = await registerClientMutation.mutateAsync(values)
+        router.push(`/dashboard/${serviceClientId}`)
         context.closeModal(id)
     }
 
