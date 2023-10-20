@@ -1,6 +1,7 @@
 import { Accordion, ActionIcon, Button, Center, CopyButton, Group, Loader, Menu, Stack, Table, Text, Timeline, Title, Tooltip } from "@mantine/core"
 import { useForm } from "@mantine/form"
 import { useLocalStorage } from "@mantine/hooks"
+import { modals } from "@mantine/modals"
 import { Prism } from "@mantine/prism"
 import DashboardShell from "@web/components/DashboardShell"
 import EditableText from "@web/components/EditableText"
@@ -12,6 +13,7 @@ import { useDocumentMutators, useFunctionMutation } from "@zachsents/fire-query"
 import classNames from "classnames"
 import { arrayRemove } from "firebase/firestore"
 import Head from "next/head"
+import { useRouter } from "next/router"
 import { TbCheck, TbCode, TbCopy, TbDots, TbKey, TbLink, TbRefresh, TbSettings, TbTrash, TbUserCancel, TbUsers } from "react-icons/tb"
 import { useMutation } from "react-query"
 import { CONNECTED_ACCOUNTS_SUBCOLLECTION, SERVICE_CLIENTS_COLLECTION } from "shared/firestore"
@@ -37,7 +39,9 @@ export default function DashboardPage() {
 
 function Inner() {
 
-    const { data: serviceClient, update } = useCurrentServiceClient()
+    const router = useRouter()
+
+    const { data: serviceClient, update, delete: deleteClient } = useCurrentServiceClient()
     const serviceType = Services.find(service => service.id === serviceClient.serviceId)
 
     const [accordionValue, setAccordionValue] = useLocalStorage({
@@ -105,7 +109,26 @@ function Inner() {
                         >
                             Roll Secret Key
                         </Menu.Item>
-                        <Menu.Item icon={<TbTrash />} color="red">Delete Client</Menu.Item>
+                        <Menu.Item
+                            icon={<TbTrash />} color="red"
+                            onClick={() => modals.openConfirmModal({
+                                title: "Delete Client",
+                                children: "Are you sure you want to delete this client? This action cannot be undone.",
+                                cancelProps: { variant: "subtle", color: "gray" },
+                                confirmProps: { color: "red" },
+                                labels: {
+                                    confirm: "Delete",
+                                    cancel: "Cancel",
+                                },
+                                centered: true,
+                                onConfirm: () => {
+                                    deleteClient.mutate()
+                                    router.push("/dashboard")
+                                },
+                            })}
+                        >
+                            Delete Client
+                        </Menu.Item>
                     </Menu.Dropdown>
                 </Menu>
             </Group>
