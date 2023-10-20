@@ -71,9 +71,9 @@ function Inner() {
         form.resetDirty()
     }
 
-    const redirectUrl = `https://woahauth.com/oauth/callback/${serviceClient.id}`
-    const authorizeUrlDisplay = <>https://woahauth.com/oauth/authorize/{serviceClient.id}?user=<span className="text-gray">[YOUR_USERS_ID]</span></>
-    const authorizeUrlCopy = `https://woahauth.com/oauth/authorize/${serviceClient.id}?user=`
+    const redirectUrl = `${process.env.NEXT_PUBLIC_DOMAIN}/oauth/callback/${serviceClient.id}`
+    const authorizeUrlDisplay = <>{process.env.NEXT_PUBLIC_DOMAIN}/oauth/authorize/{serviceClient.id}?user=<span className="text-gray">[YOUR_USERS_ID]</span></>
+    const authorizeUrlCopy = `${process.env.NEXT_PUBLIC_DOMAIN}/oauth/authorize/${serviceClient.id}?user=`
 
     const rollSecretKeyMutation = useFunctionMutation("RollOAuth2SecretKey")
     const rollSecretKey = () => {
@@ -396,7 +396,7 @@ function AccountRow({ account, serviceClientId, serviceClientSecretKey }) {
 
 const listUsersCodeSample = (serviceClientId) =>
     `const yourUsersId = "YOUR_USERS_ID"
-const url = "https://woahauth.com/api/serviceClient/${serviceClientId}/listAccountsForUser/" + yourUsersId
+const url = "${process.env.NEXT_PUBLIC_DOMAIN}/api/serviceClient/${serviceClientId}/listAccountsForUser/" + yourUsersId
 
 const connectedAccountIds = await fetch(url, {
     headers: {
@@ -413,7 +413,7 @@ const connectedAccountIds = await fetch(url, {
 
 const getTokenCodeSample = (serviceClientId) =>
     `const connectedAccountId = "connected_account_id_from_the_last_step"
-const url = "https://woahauth.com/api/serviceClient/${serviceClientId}/getTokenForAccount/" + connectedAccountId
+const url = "${process.env.NEXT_PUBLIC_DOMAIN}/api/serviceClient/${serviceClientId}/getTokenForAccount/" + connectedAccountId
 
 const tokenInfo = await fetch(url, {
     headers: {
