@@ -153,6 +153,26 @@ export const HandleOAuth2Callback = onRequest(async (req, res) => {
 })
 
 
+export const GetAccountsUsage = onCall(callablePipeline(
+    requireAuth(),
+    async request => {
+        const serviceClientIds = await db.collection(SERVICE_CLIENTS_COLLECTION)
+            .where("owner", "==", request.auth.uid).get()
+            .then(snapshot => snapshot.docs.map(doc => doc.id))
+
+        const counts = await Promise.all(
+            serviceClientIds.map(
+                serviceClientId => db.collection(SERVICE_CLIENTS_COLLECTION).doc(serviceClientId)
+                    .collection(CONNECTED_ACCOUNTS_SUBCOLLECTION).count().get()
+                    .then(snapshot => snapshot.data().count)
+            )
+        )
+
+        return counts.reduce((a, b) => a + b, 0)
+    },
+))
+
+
 export * from "./api.js"
 
 

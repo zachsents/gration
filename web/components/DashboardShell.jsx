@@ -7,10 +7,12 @@ import { Services, useServiceClientAccountCount, useServiceClients } from "@web/
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useRef } from "react"
-import { TbChartBar, TbChevronDown, TbExternalLink, TbLogout, TbPlus, TbSearch, TbUser, TbX } from "react-icons/tb"
+import { TbChartBar, TbChevronDown, TbLogout, TbPlus, TbSearch, TbUser, TbX } from "react-icons/tb"
 
 
 export default function DashboardShell({ children }) {
+
+    const router = useRouter()
 
     const user = useMustBeSignedIn()
     const { data: serviceClients } = useServiceClients()
@@ -18,10 +20,6 @@ export default function DashboardShell({ children }) {
     const [filteredServiceClients, searchQuery, setSearchQuery] = useSearch(serviceClients, {
         selector: client => `${client.nickname || ""} ${client.serviceId}`,
     })
-
-    const stripeLink = user?.email ?
-        `${process.env.NEXT_PUBLIC_STRIPE_BILLING_PORTAL_LINK}?prefilled_email=${user?.email}` :
-        process.env.NEXT_PUBLIC_STRIPE_BILLING_PORTAL_LINK
 
     return (
         <div className="w-screen min-h-screen flex gap-md items-stretch p-md relative">
@@ -35,9 +33,10 @@ export default function DashboardShell({ children }) {
 
                 <Stack className="gap-0">
                     <NavLink
-                        label="Billing & Usage" icon={<TbChartBar />} rightSection={<TbExternalLink />}
-                        component="a" href={stripeLink} target="_blank"
-                        className="rounded-md"
+                        label="Usage & Billing" icon={<TbChartBar />}
+                        component={Link} href="/dashboard/billing"
+                        active={router.pathname === "/dashboard/billing"}
+                        className="rounded-md" color="pg"
                     />
                     <Menu position="bottom" shadow="lg" offset={0}>
                         <Menu.Target>

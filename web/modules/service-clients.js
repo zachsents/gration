@@ -1,9 +1,9 @@
-import { useUser } from "reactfire"
 import { useCollectionQuery, useDocument } from "@zachsents/fire-query"
-import { CONNECTED_ACCOUNTS_SUBCOLLECTION, SERVICE_CLIENTS_COLLECTION } from "shared/firestore"
 import { where } from "firebase/firestore"
-import { TbBrandAirtable, TbBrandAsana, TbBrandAzure, TbBrandBitbucket, TbBrandFacebook, TbBrandGithub, TbBrandGitlab, TbBrandGmail, TbBrandGoogle, TbBrandGoogleDrive, TbBrandSlack, TbBrandStripe, TbBrandTrello, TbBrandX, TbBrandZoom, TbForms, TbTable } from "react-icons/tb"
 import { useRouter } from "next/router"
+import { TbBrandAirtable, TbBrandAsana, TbBrandAzure, TbBrandBitbucket, TbBrandFacebook, TbBrandGithub, TbBrandGitlab, TbBrandGmail, TbBrandGoogle, TbBrandGoogleDrive, TbBrandSlack, TbBrandStripe, TbBrandTrello, TbBrandX, TbBrandZoom, TbForms, TbTable } from "react-icons/tb"
+import { useUser } from "reactfire"
+import { CONNECTED_ACCOUNTS_SUBCOLLECTION, SERVICE_CLIENTS_COLLECTION } from "shared/firestore"
 
 
 export function useServiceClients() {

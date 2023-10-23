@@ -1,7 +1,8 @@
 import { Button, Center, Divider, Stack, Text, Title } from "@mantine/core"
 import BrandCarousel from "@web/components/BrandCarousel"
 import { signOut, useMustBeSignedIn } from "@web/modules/firebase/auth"
-import { TbBrandX, TbExternalLink, TbLogout } from "react-icons/tb"
+import Link from "next/link"
+import { TbBrandX, TbDashboard, TbExternalLink, TbLogout } from "react-icons/tb"
 
 
 export default function IndexPage() {
@@ -21,6 +22,13 @@ export default function IndexPage() {
                     <Text className="text-center text-gray">
                         Get hyped! Connecting to your users' accounts is about to get a whole lot easier.
                     </Text>
+
+                    <Button
+                        color="pg" leftIcon={<TbDashboard />}
+                        component={Link} href="/dashboard"
+                    >
+                        Go to Dashboard
+                    </Button>
 
                     <Divider />
 

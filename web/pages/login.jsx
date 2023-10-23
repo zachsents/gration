@@ -14,7 +14,7 @@ import { useMutation } from "react-query"
 
 export default function LoginPage() {
 
-    useMustNotBeSignedIn()
+    useMustNotBeSignedIn("/dashboard")
 
     const isMobile = useIsMobile()
     const router = useRouter()
@@ -41,7 +41,7 @@ export default function LoginPage() {
     })
 
     const onSuccess = () => {
-        router.push("/")
+        router.push("/dashboard")
         notifications.clean()
     }
 
