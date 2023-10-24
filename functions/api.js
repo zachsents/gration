@@ -4,14 +4,25 @@ import { onRequest } from "firebase-functions/v2/https"
 import { db } from "./init.js"
 import { CONNECTED_ACCOUNTS_SUBCOLLECTION, SERVICE_CLIENTS_COLLECTION } from "shared/firestore.js"
 import { SERVICE } from "shared/services.js"
-import * as google from "./modules/google.js"
+import * as google from "./services/google.js"
 
 
 const app = express()
 
 app.use(morgan("dev"))
 
-app.get("/serviceClient/:serviceClientId/listAccountsForUser/:appUserId", authenticateKey, async (req, res) => {
+app.get("/serviceClient/:serviceClientId/listAccountsForUser/:appUserId", authenticateKey, listAccountsForUser)
+app.get("/api/serviceClient/:serviceClientId/listAccountsForUser/:appUserId", authenticateKey, listAccountsForUser)
+
+app.get("/serviceClient/:serviceClientId/getTokenForAccount/:connectedAccountId", authenticateKey, getTokenForAccount)
+app.get("/api/serviceClient/:serviceClientId/getTokenForAccount/:connectedAccountId", authenticateKey, getTokenForAccount)
+
+
+/**
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+async function listAccountsForUser(req, res) {
     const { serviceClientId, appUserId } = req.params
 
     if (!appUserId)
@@ -24,9 +35,14 @@ app.get("/serviceClient/:serviceClientId/listAccountsForUser/:appUserId", authen
         .then(snapshot => snapshot.docs.map(doc => doc.id))
 
     res.send(connectedAccounts)
-})
+}
 
-app.get("/serviceClient/:serviceClientId/getTokenForAccount/:connectedAccountId", authenticateKey, async (req, res) => {
+
+/**
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+async function getTokenForAccount(req, res) {
     const { serviceClientId, connectedAccountId } = req.params
 
     if (!connectedAccountId)
@@ -55,7 +71,8 @@ app.get("/serviceClient/:serviceClientId/getTokenForAccount/:connectedAccountId"
     await connectedAccountRef.update(tokenData)
 
     res.send(tokenData)
-})
+}
+
 
 /**
  * @param {express.Request} req
