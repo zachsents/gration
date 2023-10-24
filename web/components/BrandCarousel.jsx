@@ -48,9 +48,9 @@ export default function BrandCarousel({ showComingSoon = false }) {
 
     return (<>
         <div className="px-xl">
-            <Text className="text-4xl md:text-7xl text-pg-600 font-bold">Integrate with your users'</Text>
+            <Text className="text-4xl md:text-7xl text-pg-600 font-bold">Add a</Text>
             <Text className="text-5xl md:text-8xl text-primary-700 font-bold">{currentBrand}</Text>
-            <Text className="text-4xl md:text-7xl text-pg-600 font-bold">account</Text>
+            <Text className="text-4xl md:text-7xl text-pg-600 font-bold">integration to your SaaS</Text>
 
             {showComingSoon &&
                 <Badge
