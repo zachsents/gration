@@ -1,30 +1,32 @@
 import { Button, Card, Center, Group, Progress, Stack, Switch, Text, ThemeIcon, Title } from "@mantine/core"
 import DashboardShell from "@web/components/DashboardShell"
-import { useMustBeSignedIn } from "@web/modules/firebase/auth"
-import { useProductInfo } from "@web/modules/stripe"
+import { useCreateCheckoutSession, useGoToCustomerPortal, useProductInfo, useUserClaims } from "@web/modules/stripe"
 import { useFunctionQuery } from "@zachsents/fire-query"
 import Head from "next/head"
 import { useState } from "react"
-import { TbArrowUpRight, TbExternalLink, TbStar } from "react-icons/tb"
+import { TbArrowUpRight, TbPigMoney, TbStar } from "react-icons/tb"
+import { FREE_ACCOUNT_LIMIT } from "shared/stripe"
 
 
 export default function DashboardBillingPage() {
 
-    const user = useMustBeSignedIn()
+    const [annual, setAnnual] = useState(true)
 
-    const stripeLink = user?.email ?
-        `${process.env.NEXT_PUBLIC_STRIPE_BILLING_PORTAL_LINK}?prefilled_email=${user?.email}` :
-        process.env.NEXT_PUBLIC_STRIPE_BILLING_PORTAL_LINK
+    const [goToPortal, portalMutation] = useGoToCustomerPortal()
 
-    const countQuery = useFunctionQuery("GetAccountsUsage", {})
-    const productInfoQuery = useProductInfo("starter")
+    const userClaims = useUserClaims()
+    const stripeRole = userClaims.data?.stripeRole
+    const isStarter = stripeRole === "starter"
+    const isBusiness = stripeRole === "business"
+
+    const productInfoQuery = useProductInfo(stripeRole)
+    const countQuery = useFunctionQuery("GetAccountsUsage", {}, {
+        refetchInterval: 1000 * 30 // 30 seconds
+    })
 
     const accountsUsed = countQuery.data?.data ?? 0
     const accountsTotal = productInfoQuery.data?.metadata.accountLimit ?
-        parseInt(productInfoQuery.data?.metadata.accountLimit) : 0
-
-    // const userClaims = useUserClaims()
-    // console.log(user, userClaims.data)
+        parseInt(productInfoQuery.data?.metadata.accountLimit) : FREE_ACCOUNT_LIMIT
 
     return (<>
         <Head>
@@ -47,33 +49,33 @@ export default function DashboardBillingPage() {
                             size="lg" className="rounded-full mt-sm"
                         />
                     </Card>
-                    <Card className="p-xl bg-pg-100">
-                        <Text className="text-xs uppercase font-bold text-pg">
+                    <Card className="p-xl bg-pg-600">
+                        <Text className="text-xs uppercase font-bold text-pg-100">
                             Current Plan
                         </Text>
-                        <Text className="text-3xl text-pg font-bold mt-md">
-                            Starter
+                        <Text className="text-3xl text-white font-bold mt-md">
+                            {productInfoQuery.data?.name ?? "Free"}
                         </Text>
                     </Card>
                 </Group>
 
                 <Stack>
-                    <BillingCard
-                        productName="starter"
-                        monthlyBillingLink="https://buy.stripe.com/aEU6s82iv3HD7vieUW"
-                        annualBillingLink="https://buy.stripe.com/00g2bS7CPfql2aY5kn"
-                    />
-                    <BillingCard
-                        productName="business" color="primary"
-                        monthlyBillingLink="https://buy.stripe.com/3cs9Ek5uH0vr02Q9AE"
-                        annualBillingLink="https://buy.stripe.com/14k4k03mz2DzbLy28d"
-                    />
+                    {!isStarter && !isBusiness &&
+                        <BillingCard
+                            productName="starter"
+                            {...{ annual, setAnnual }}
+                        />}
+                    {!isBusiness &&
+                        <BillingCard
+                            productName="business" color="primary"
+                            {...{ annual, setAnnual }}
+                        />}
                 </Stack>
 
                 <Center>
                     <Button
-                        component="a" href={stripeLink} target="_blank"
-                        rightIcon={<TbExternalLink />} color="gray"
+                        color="gray" leftIcon={<TbPigMoney />}
+                        onClick={goToPortal} loading={portalMutation.isLoading}
                     >
                         Manage Billing
                     </Button>
@@ -84,12 +86,12 @@ export default function DashboardBillingPage() {
 }
 
 
-function BillingCard({ productName, color = "pg", monthlyBillingLink, annualBillingLink }) {
+function BillingCard({ productName, color = "pg", annual, setAnnual }) {
 
     const productInfoQuery = useProductInfo(productName)
     const accountLimitLabel = parseInt(productInfoQuery.data?.metadata.accountLimit).toLocaleString()
 
-    const [annual, setAnnual] = useState(true)
+    const [createCheckoutSession, checkoutSessionMutation] = useCreateCheckoutSession(productName, annual)
 
     return (
         <Card className="base-border p-xl">
@@ -114,11 +116,12 @@ function BillingCard({ productName, color = "pg", monthlyBillingLink, annualBill
                         <Switch
                             className="mt-2" color={color}
                             checked={annual} onChange={evt => setAnnual(evt.currentTarget.checked)}
+                            classNames={{ track: "cursor-pointer" }}
                         />
                     </Stack>
                     <Button
-                        leftIcon={<TbArrowUpRight />} rightIcon={<TbExternalLink />} color={color}
-                        component="a" href={annual ? annualBillingLink : monthlyBillingLink} target="_blank"
+                        rightIcon={<TbArrowUpRight />} color={color}
+                        onClick={createCheckoutSession} loading={checkoutSessionMutation.isLoading}
                     >
                         Upgrade Now
                     </Button>

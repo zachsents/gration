@@ -4,13 +4,13 @@ importers:
 
   .:
     specifiers:
-      '@turbo/gen': ^1.10.15
+      '@turbo/gen': ^1.10.16
       eslint: ^7.32.0
       eslint-config-custom: workspace:*
       prettier: ^2.8.8
       turbo: latest
     devDependencies:
-      '@turbo/gen': 1.10.15_tcr4jd7o2xcht34meetgdreooe
+      '@turbo/gen': 1.10.16_wdmzj2hmns22fmop55zxa6xwzi
       eslint: 7.32.0
       eslint-config-custom: link:eslint-config-custom
       prettier: 2.8.8
@@ -73,7 +73,7 @@ importers:
       '@types/node': ^17.0.45
       '@types/react': ^18.2.28
       '@types/react-dom': ^18.2.13
-      '@zachsents/fire-query': ^1.1.2
+      '@zachsents/fire-query': ^1.1.4
       '@zachsents/next-firebase-rewrites': ^1.1.1
       autoprefixer: ^10.4.16
       classnames: ^2.3.2
@@ -107,7 +107,7 @@ importers:
       '@mantine/modals': 6.0.21_hpnsvztc57wsdtanyivhwcmsrq
       '@mantine/notifications': 6.0.21_hpnsvztc57wsdtanyivhwcmsrq
       '@mantine/prism': 6.0.21_hpnsvztc57wsdtanyivhwcmsrq
-      '@zachsents/fire-query': 1.1.2_react-dom@18.2.0
+      '@zachsents/fire-query': 1.1.4_react-dom@18.2.0
       classnames: 2.3.2
       dayjs: 1.11.10
       embla-carousel-react: 8.0.0-rc14_react@18.2.0
@@ -447,7 +447,7 @@ packages:
     resolution: {integrity: sha512-54cIh74Z1rp4oIjsHjqN+WM4fMyCBYe+LpZ9jWm51CZ1fbH3SkAzQD/3XLoNkjbJ7YEmjobLXyvQrFypRHOrXw==}
     engines: {node: '>=6.9.0'}
     dependencies:
-      core-js-pure: 3.33.0
+      core-js-pure: 3.33.1
       regenerator-runtime: 0.14.0
     dev: true
 
@@ -2010,11 +2010,11 @@ packages:
     resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
     dev: true
 
-  /@turbo/gen/1.10.15_tcr4jd7o2xcht34meetgdreooe:
-    resolution: {integrity: sha512-nvCiw2Como/K1LfqBQBpp+IiFEWQtlhx5f6iXIpmioj2DtVTg+RmyQM+5nIqbi8iaXg3zaF5vQo29bTyuohUuw==}
+  /@turbo/gen/1.10.16_wdmzj2hmns22fmop55zxa6xwzi:
+    resolution: {integrity: sha512-PzyluADjVuy5OcIi+/aRcD70OElQpRVRDdfZ9fH8G5Fv75lQcNrjd1bBGKmhjSw+g+eTEkXMGnY7s6gsCYjYTQ==}
     hasBin: true
     dependencies:
-      '@turbo/workspaces': 1.10.15
+      '@turbo/workspaces': 1.10.16
       chalk: 2.4.2
       commander: 10.0.1
       fs-extra: 10.1.0
@@ -2022,7 +2022,7 @@ packages:
       minimatch: 9.0.3
       node-plop: 0.26.3
       proxy-agent: 6.3.1
-      ts-node: 10.9.1_tcr4jd7o2xcht34meetgdreooe
+      ts-node: 10.9.1_wdmzj2hmns22fmop55zxa6xwzi
       update-check: 1.5.4
       validate-npm-package-name: 5.0.0
     transitivePeerDependencies:
@@ -2033,8 +2033,8 @@ packages:
       - typescript
     dev: true
 
-  /@turbo/workspaces/1.10.15:
-    resolution: {integrity: sha512-BlwnC2Mi1mTsg/LyHyAVmZKzQ4abKGZdFBgxCMWIzhXltnmI3MC8SBjZVeBVXsvoGdGrJ4uwLCrrCyazUhKhqQ==}
+  /@turbo/workspaces/1.10.16:
+    resolution: {integrity: sha512-WKpMyWC4fKCji9DFSaL6uUnTakOmL769LfiNOGk2v5jONMKpjvOB1o1nXkWNbU/PTPqxwV4Cf5qzNSWIgnanYg==}
     hasBin: true
     dependencies:
       chalk: 2.4.2
@@ -2129,7 +2129,7 @@ packages:
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
     dependencies:
       '@types/minimatch': 5.1.2
-      '@types/node': 20.8.7
+      '@types/node': 20.8.8
     dev: true
 
   /@types/glob/8.1.0:
@@ -2241,8 +2241,8 @@ packages:
     dependencies:
       undici-types: 5.25.3
 
-  /@types/node/20.8.7:
-    resolution: {integrity: sha512-21TKHHh3eUHIi2MloeptJWALuCu5H7HQTdTrWIFReA8ad+aggoX+lRes3ex7/FtpC+sVUpFMQ+QTfYr74mruiQ==}
+  /@types/node/20.8.8:
+    resolution: {integrity: sha512-YRsdVxq6OaLfmR9Hy816IMp33xOBjfyOgUd77ehqg96CFywxAPbDbXvAsuN2KVg2HOT8Eh6uAfU+l4WffwPVrQ==}
     dependencies:
       undici-types: 5.25.3
     dev: true
@@ -2311,7 +2311,7 @@ packages:
   /@types/through/0.0.32:
     resolution: {integrity: sha512-7XsfXIsjdfJM2wFDRAtEWp3zb2aVPk5QeyZxGlVK57q4u26DczMHhJmlhr0Jqv0THwxam/L8REXkj8M2I/lcvw==}
     dependencies:
-      '@types/node': 20.8.7
+      '@types/node': 20.8.8
     dev: true
 
   /@types/tinycolor2/1.4.5:
@@ -2403,8 +2403,8 @@ packages:
     hasBin: true
     dev: true
 
-  /@zachsents/fire-query/1.1.2_react-dom@18.2.0:
-    resolution: {integrity: sha512-wpgeVfrZPW60kRmP5pqcv/pbjjrEZO4LE7bnX99N3zjNX7pTRfWZQxkysbpsFpnXdo43FUgvpH3qvXnf6AmAIg==}
+  /@zachsents/fire-query/1.1.4_react-dom@18.2.0:
+    resolution: {integrity: sha512-hSoHPSA9YbLch50q6KDOJJOJ4eSMSUkJuhyFKPr4vfjRmvYEFgss3Dei9fTAw5AmyKtntw8i0Op+W7fXyfn+Zw==}
     dependencies:
       firebase: 10.5.0
       hash-it: 6.0.0
@@ -3189,8 +3189,8 @@ packages:
     resolution: {integrity: sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==}
     engines: {node: '>= 0.6'}
 
-  /core-js-pure/3.33.0:
-    resolution: {integrity: sha512-FKSIDtJnds/YFIEaZ4HszRX7hkxGpNKM7FC9aJ9WLJbSd3lD4vOltFuVIBLR8asSx9frkTSqL0dw90SKQxgKrg==}
+  /core-js-pure/3.33.1:
+    resolution: {integrity: sha512-wCXGbLjnsP10PlK/thHSQlOLlLKNEkaWbTzVvHHZ79fZNeN1gUmw2gBlpItxPv/pvqldevEXFh/d5stdNvl6EQ==}
     requiresBuild: true
     dev: true
 
@@ -8401,7 +8401,7 @@ packages:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
     dev: true
 
-  /ts-node/10.9.1_tcr4jd7o2xcht34meetgdreooe:
+  /ts-node/10.9.1_wdmzj2hmns22fmop55zxa6xwzi:
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -8420,7 +8420,7 @@ packages:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 17.0.45
+      '@types/node': 20.8.8
       acorn: 8.10.0
       acorn-walk: 8.2.0
       arg: 4.1.3
