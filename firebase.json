@@ -21,7 +21,30 @@
             "**/.*",
             "**/node_modules/**"
         ],
-        "rewrites": [],
+        "rewrites": [
+            {
+                "regex": "^/dashboard/([^/]+?)(?:/)?$",
+                "destination": "/dashboard/[serviceClientId].html"
+            },
+            {
+                "source": "/oauth/callback",
+                "function": {
+                    "functionId": "HandleOAuth2Callback"
+                }
+            },
+            {
+                "source": "/oauth/authorize/**",
+                "function": {
+                    "functionId": "AuthorizeOAuth2User"
+                }
+            },
+            {
+                "source": "/api/**",
+                "function": {
+                    "functionId": "api"
+                }
+            }
+        ],
         "cleanUrls": true
     },
     "storage": {

@@ -11,7 +11,7 @@ export function getOAuth2Client(serviceClient) {
     return new google.auth.OAuth2({
         clientId: serviceClient.clientId,
         clientSecret: serviceClient.clientSecret,
-        redirectUri: "http://127.0.0.1:5001/gration-f5cd8/us-central1/HandleOAuth2Callback",
+        redirectUri: "https://woahauth.com/oauth/callback",
     })
 }
 

@@ -84,7 +84,7 @@ export const RollOAuth2SecretKey = onCall(callablePipeline(
 
 
 export const AuthorizeOAuth2User = onRequest(async (req, res) => {
-    const serviceClientId = req.params[0]
+    const serviceClientId = req.params[0].match(/\w+$/)?.[0]
 
     if (!serviceClientId)
         return res.status(400).send("Service client ID is required")

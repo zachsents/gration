@@ -71,7 +71,7 @@ function Inner() {
         form.resetDirty()
     }
 
-    const redirectUrl = `${process.env.NEXT_PUBLIC_DOMAIN}/oauth/callback/${serviceClient.id}`
+    const redirectUrl = `${process.env.NEXT_PUBLIC_DOMAIN}/oauth/callback`
     const authorizeUrlDisplay = <>{process.env.NEXT_PUBLIC_DOMAIN}/oauth/authorize/{serviceClient.id}?user=<span className="text-gray">[YOUR_USERS_ID]</span></>
     const authorizeUrlCopy = `${process.env.NEXT_PUBLIC_DOMAIN}/oauth/authorize/${serviceClient.id}?user=`
 
@@ -323,7 +323,7 @@ function AccountRow({ account, serviceClientId, serviceClientSecretKey }) {
         mutationFn: async () => {
             const headers = new Headers()
             headers.append("Authorization", `Bearer ${serviceClientSecretKey}`)
-            const res = await fetch(`http://127.0.0.1:5001/gration-f5cd8/us-central1/api/serviceClient/${serviceClientId}/getTokenForAccount/${account.id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_DOMAIN}/api/serviceClient/${serviceClientId}/getTokenForAccount/${account.id}`, {
                 headers,
             })
             return res.json()
@@ -335,7 +335,7 @@ function AccountRow({ account, serviceClientId, serviceClientSecretKey }) {
             "bg-gray-200": _deleteAccount.isLoading || update.isLoading,
         })}>
             <td>{account.id}</td>
-            <td>{account.appUsers.map(userId =>
+            <td>{account.appUsers?.map(userId =>
                 <Menu position="bottom" shadow="xs" key={userId}>
                     <Menu.Target>
                         <Button
