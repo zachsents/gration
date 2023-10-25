@@ -4,8 +4,7 @@ import Joi from "joi"
 import { AUTH_STATE_COLLECTION, CONNECTED_ACCOUNTS_SUBCOLLECTION, SERVICE_CLIENTS_COLLECTION } from "shared/firestore.js"
 import { SERVICE, SERVICE_AUTH_TYPE } from "shared/services.js"
 import { db } from "./init.js"
-import * as google from "./modules/google.js"
-import { generateSecretKey, parseScopes } from "./modules/util.js"
+import { generateSecretKey, getAuthService } from "./modules/util.js"
 
 
 /**
@@ -105,19 +104,18 @@ export const AuthorizeOAuth2User = onRequest(async (req, res) => {
         createdAt: FieldValue.serverTimestamp(),
     })
 
-    switch (serviceClient.serviceId) {
-        case SERVICE.GOOGLE.id:
-            return res.redirect(
-                google.getOAuth2Client(serviceClient).generateAuthUrl({
-                    access_type: "offline",
-                    scope: [...new Set([...serviceClient.scopes, ...parseScopes(req.query.scopes)])],
-                    state: authStateRef.id,
-                    include_granted_scopes: true,
-                })
-            )
-    }
+    const authService = getAuthService(serviceClient.serviceId)
 
-    res.status(501).send("Not implemented")
+    if (!authService)
+        return res.status(501).send("Not implemented")
+
+    const authUrl = await authService.generateAuthUrl({
+        request: req,
+        serviceClient,
+        state: authStateRef.id,
+    })
+
+    return res.redirect(authUrl)
 })
 
 
@@ -134,14 +132,15 @@ export const HandleOAuth2Callback = onRequest(async (req, res) => {
     /** @type {ServiceClient} */
     const serviceClient = await serviceClientRef.get().then(snapshot => snapshot.data())
 
-    let connectedAccount
-    switch (serviceClient.serviceId) {
-        case SERVICE.GOOGLE.id:
-            connectedAccount = await google.handleOAuth2Callback({ request: req, serviceClient })
-            break
-        default:
-            return res.status(501).send("Not implemented")
-    }
+    const authService = getAuthService(serviceClient.serviceId)
+
+    if (!authService)
+        return res.status(501).send("Not implemented")
+
+    const connectedAccount = await authService.handleOAuth2Callback({
+        request: req,
+        serviceClient,
+    })
 
     await serviceClientRef.collection(CONNECTED_ACCOUNTS_SUBCOLLECTION).doc(connectedAccount.id).set({
         ...connectedAccount.data,
@@ -149,7 +148,7 @@ export const HandleOAuth2Callback = onRequest(async (req, res) => {
         ...authState.appUserId && { appUsers: FieldValue.arrayUnion(authState.appUserId) },
     }, { merge: true })
 
-    res.send("<script>window.close()</script><p>Logged in. You may close this window.</p>")
+    res.send("<script>window.onload = () => window.close()</script>Logged in. You may close this window.")
 })
 
 

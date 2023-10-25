@@ -1,10 +1,9 @@
 import express from "express"
-import morgan from "morgan"
 import { onRequest } from "firebase-functions/v2/https"
-import { db } from "./init.js"
+import morgan from "morgan"
 import { CONNECTED_ACCOUNTS_SUBCOLLECTION, SERVICE_CLIENTS_COLLECTION } from "shared/firestore.js"
-import { SERVICE } from "shared/services.js"
-import * as google from "./services/google.js"
+import { db } from "./init.js"
+import { getAuthService } from "./modules/util.js"
 
 
 const app = express()
@@ -56,17 +55,15 @@ async function getTokenForAccount(req, res) {
     if (!connectedAccount)
         return res.status(404).send(`Connected account ${connectedAccountId} not found`)
 
-    let tokenData
-    switch (req.serviceClient.serviceId) {
-        case SERVICE.GOOGLE.id:
-            tokenData = await google.getFreshToken({
-                serviceClient: req.serviceClient,
-                connectedAccount,
-            })
-            break
-        default:
-            return res.status(501).send("Not implemented")
-    }
+    const authService = getAuthService(req.serviceClient.serviceId)
+
+    if (!authService)
+        return res.status(501).send("Not implemented")
+
+    const tokenData = await authService.getFreshToken({
+        serviceClient: req.serviceClient,
+        connectedAccount,
+    })
 
     await connectedAccountRef.update(tokenData)
 
