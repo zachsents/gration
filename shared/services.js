@@ -22,16 +22,6 @@ export const SERVICE = {
         name: "Airtable",
         authType: SERVICE_AUTH_TYPE.OAUTH2,
     },
-    OPENAI: {
-        id: "openai",
-        name: "OpenAI",
-        authType: SERVICE_AUTH_TYPE.API_KEY,
-    },
-    STRIPE: {
-        id: "stripe",
-        name: "Stripe",
-        authType: SERVICE_AUTH_TYPE.API_KEY,
-    },
 }
 
 /**

@@ -88,7 +88,7 @@ export const AuthorizeOAuth2User = onRequest(async (req, res) => {
     if (!serviceClientId)
         return res.status(400).send("Service client ID is required")
 
-    /** @type {ServiceClient} */
+    /** @type {import("./modules/util.js").ServiceClient} */
     const serviceClient = await db.collection(SERVICE_CLIENTS_COLLECTION).doc(serviceClientId).get().then(snapshot => snapshot.data())
 
     if (!serviceClient)
@@ -97,25 +97,27 @@ export const AuthorizeOAuth2User = onRequest(async (req, res) => {
     if (serviceClient.authType !== SERVICE_AUTH_TYPE.OAUTH2)
         return res.status(400).send(`Service client ${serviceClientId} is not an OAuth2 client`)
 
-    const authStateRef = db.collection(AUTH_STATE_COLLECTION).doc()
-    await authStateRef.set({
-        serviceClientId,
-        appUserId: req.query.user,
-        createdAt: FieldValue.serverTimestamp(),
-    })
-
     const authService = getAuthService(serviceClient.serviceId)
 
     if (!authService)
         return res.status(501).send("Not implemented")
 
-    const authUrl = await authService.generateAuthUrl({
+    const authStateRef = db.collection(AUTH_STATE_COLLECTION).doc()
+
+    const { url, additionalState } = await authService.generateAuthUrl({
         request: req,
         serviceClient,
         state: authStateRef.id,
     })
 
-    return res.redirect(authUrl)
+    await authStateRef.set({
+        serviceClientId,
+        appUserId: req.query.user,
+        createdAt: FieldValue.serverTimestamp(),
+        ...additionalState,
+    })
+
+    return res.redirect(url)
 })
 
 
@@ -124,12 +126,12 @@ export const HandleOAuth2Callback = onRequest(async (req, res) => {
     if (!req.query.code || !req.query.state)
         return res.status(400).send("Malformed request")
 
-    /** @type {AuthState} */
+    /** @type {import("./modules/util.js").AuthState} */
     const authState = await db.collection(AUTH_STATE_COLLECTION).doc(req.query.state).get()
         .then(snapshot => snapshot.data())
 
     const serviceClientRef = db.collection(SERVICE_CLIENTS_COLLECTION).doc(authState.serviceClientId)
-    /** @type {ServiceClient} */
+    /** @type {import("./modules/util.js").ServiceClient} */
     const serviceClient = await serviceClientRef.get().then(snapshot => snapshot.data())
 
     const authService = getAuthService(serviceClient.serviceId)
@@ -140,6 +142,7 @@ export const HandleOAuth2Callback = onRequest(async (req, res) => {
     const connectedAccount = await authService.handleOAuth2Callback({
         request: req,
         serviceClient,
+        authState,
     })
 
     await serviceClientRef.collection(CONNECTED_ACCOUNTS_SUBCOLLECTION).doc(connectedAccount.id).set({
@@ -173,27 +176,6 @@ export const GetAccountsUsage = onCall(callablePipeline(
 
 
 export * from "./api.js"
-
-
-/**
- * @typedef {object} ServiceClient
- * @property {string} serviceId - The ID of the service this client is for.
- * @property {string} clientId - The OAuth client ID. This is from the service provider.
- * @property {string} clientSecret - The OAuth client secret. This is from the service provider.
- * @property {string} nickname - The nickname of this client.
- * @property {"oauth2" | "api_key"} authType - The type of authentication this client uses.
- * @property {string} owner - The ID of the user who owns this client.
- * @property {import("firebase-admin/firestore").Timestamp} createdAt - The date this client was created.
- * @property {string[]} scopes - The OAuth scopes this client has access to.
- * @property {string} secretKey - The secret key used to authenticate API requests.
- */
-
-/**
- * @typedef {object} AuthState
- * @property {string} serviceClientId - The ID of the service client that initiated the auth flow.
- * @property {string} appUserId - The ID of the app user that initiated the auth flow.
- * @property {import("firebase-admin/firestore").Timestamp} createdAt - The date this client was created.
- */
 
 
 /**

@@ -15,21 +15,20 @@ export function getAuthService(serviceId) {
 }
 
 
-/** @typedef {import("../index.js").ServiceClient} ServiceClient */
 /** @typedef {import("firebase-functions/v2/https").Request} Request */
 
 
-/** @typedef {(params: { request: Request, serviceClient: ServiceClient, state: string }) => Promise<string>} AuthServiceGenerateAuthUrlFunction */
-/** @typedef {(params: { request: Request, serviceClient: ServiceClient }) => Promise<{ id: string, data: ConnectedAccount }>} AuthServiceHandleOAuth2CallbackFunction */
-/** @typedef {(params: { serviceClient: ServiceClient, connectedAccount: ConnectedAccount }) => Promise<{ accessToken: string, expiresAt: Date }>} AuthServiceGetFreshTokenFunction */
-
 /**
- * @typedef {object} AuthService
- * 
- * @property {string} serviceId
- * @property {AuthServiceGenerateAuthUrlFunction} generateAuthUrl
- * @property {AuthServiceHandleOAuth2CallbackFunction} handleOAuth2Callback
- * @property {AuthServiceGetFreshTokenFunction} getFreshToken
+ * @typedef {object} ServiceClient
+ * @property {string} serviceId - The ID of the service this client is for.
+ * @property {string} clientId - The OAuth client ID. This is from the service provider.
+ * @property {string} clientSecret - The OAuth client secret. This is from the service provider.
+ * @property {string} nickname - The nickname of this client.
+ * @property {"oauth2" | "api_key"} authType - The type of authentication this client uses.
+ * @property {string} owner - The ID of the user who owns this client.
+ * @property {import("firebase-admin/firestore").Timestamp} createdAt - The date this client was created.
+ * @property {string[]} scopes - The OAuth scopes this client has access to.
+ * @property {string} secretKey - The secret key used to authenticate API requests.
  */
 
 
@@ -42,3 +41,14 @@ export function getAuthService(serviceId) {
  * @property {string} tokenType
  * @property {Date} expiresAt
  */
+
+
+/**
+ * @typedef {object} AuthState
+ * @property {string} serviceClientId - The ID of the service client that initiated the auth flow.
+ * @property {string} appUserId - The ID of the app user that initiated the auth flow.
+ * @property {import("firebase-admin/firestore").Timestamp} createdAt - The date this client was created.
+ */
+
+
+export const CALLBACK_URL = "https://woahauth.com/oauth/callback"

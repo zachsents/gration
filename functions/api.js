@@ -4,6 +4,7 @@ import morgan from "morgan"
 import { CONNECTED_ACCOUNTS_SUBCOLLECTION, SERVICE_CLIENTS_COLLECTION } from "shared/firestore.js"
 import { db } from "./init.js"
 import { getAuthService } from "./modules/util.js"
+import _ from "lodash"
 
 
 const app = express()
@@ -60,14 +61,19 @@ async function getTokenForAccount(req, res) {
     if (!authService)
         return res.status(501).send("Not implemented")
 
-    const tokenData = await authService.getFreshToken({
+    const tokenInfo = await authService.getFreshToken({
         serviceClient: req.serviceClient,
         connectedAccount,
     })
 
-    await connectedAccountRef.update(tokenData)
+    if (tokenInfo.checked) {
+        await connectedAccountRef.update({
+            ...tokenInfo.data,
+            checkedAt: new Date(),
+        })
+    }
 
-    res.send(tokenData)
+    res.send(_.pick(tokenInfo.data, ["accessToken", "expiresAt"]))
 }
 
 

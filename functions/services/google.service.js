@@ -1,18 +1,20 @@
 import { google } from "googleapis"
-import { parseScopes } from "../modules/util.js"
+import { CALLBACK_URL, parseScopes } from "../modules/util.js"
 
 
-/** @type {import("../modules/util.js").AuthService} */
+/** @type {import("../modules/AuthService.js").AuthService} */
 export default {
     serviceId: "google",
 
     generateAuthUrl: async ({ serviceClient, request, state }) => {
-        return getOAuth2Client(serviceClient).generateAuthUrl({
+        const url = getOAuth2Client(serviceClient).generateAuthUrl({
             access_type: "offline",
             scope: [...new Set([...serviceClient.scopes, ...parseScopes(request.query.scopes)])],
             state,
-            include_granted_scopes: true,
+            // include_granted_scopes: true,
         })
+
+        return { url }
     },
 
     handleOAuth2Callback: async ({ serviceClient, request }) => {
@@ -25,7 +27,7 @@ export default {
             data: {
                 accessToken: tokens.access_token,
                 refreshToken: tokens.refresh_token,
-                scopes: parseScopes(tokens.scope),
+                scopes: tokenInfo.scopes,
                 tokenType: tokens.token_type,
                 idToken: tokens.id_token,
                 expiresAt: new Date(tokens.expiry_date),
@@ -41,8 +43,11 @@ export default {
         const tokenInfo = await client.getTokenInfo(accessToken)
 
         return {
-            accessToken,
-            expiresAt: new Date(tokenInfo.expiry_date),
+            checked: true,
+            data: {
+                accessToken,
+                expiresAt: new Date(tokenInfo.expiry_date),
+            },
         }
     },
 }
@@ -56,6 +61,6 @@ function getOAuth2Client(serviceClient) {
     return new google.auth.OAuth2({
         clientId: serviceClient.clientId,
         clientSecret: serviceClient.clientSecret,
-        redirectUri: "https://woahauth.com/oauth/callback",
+        redirectUri: CALLBACK_URL,
     })
 }
