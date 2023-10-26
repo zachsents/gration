@@ -29,7 +29,7 @@ export default function DashboardPage() {
         </Head>
         <DashboardShell>
             {!isLoading && serviceClient ?
-                <Inner /> :
+                <Inner key={serviceClient.id} /> :
                 <Center className="w-full h-full">
                     <Loader variant="bars" />
                 </Center>}
