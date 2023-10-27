@@ -10,7 +10,7 @@ importers:
       prettier: ^2.8.8
       turbo: latest
     devDependencies:
-      '@turbo/gen': 1.10.16_wdmzj2hmns22fmop55zxa6xwzi
+      '@turbo/gen': 1.10.16_tcr4jd7o2xcht34meetgdreooe
       eslint: 7.32.0
       eslint-config-custom: link:eslint-config-custom
       prettier: 2.8.8
@@ -64,6 +64,7 @@ importers:
   web:
     specifiers:
       '@emotion/react': ^11.11.1
+      '@feedback-fish/react': ^1.2.2
       '@mantine/carousel': ^6.0.21
       '@mantine/core': ^6.0.21
       '@mantine/dates': ^6.0.21
@@ -101,6 +102,7 @@ importers:
       zustand: ^4.4.3
     dependencies:
       '@emotion/react': 11.11.1_4r6hgnselqdgzo3f3gd364vqle
+      '@feedback-fish/react': 1.2.2_react@18.2.0
       '@mantine/carousel': 6.0.21_cxezqvqygf3obxodudjvyrv3lm
       '@mantine/core': 6.0.21_55qed3fnepbxaoc6ocwepylqdu
       '@mantine/dates': 6.0.21_6xm2qhu22qte6ci5tvwd73glpq
@@ -636,6 +638,15 @@ packages:
     engines: {node: '>=14'}
     dependencies:
       text-decoding: 1.0.0
+
+  /@feedback-fish/react/1.2.2_react@18.2.0:
+    resolution: {integrity: sha512-T6VxMM8nNsD3b5ulVsrcvcrNDAc4d73RLYK8Iw+6PFPIdMU2I/mOiuAHvfGauBVIWYHflja4VOdjm3z4CtlvYQ==}
+    engines: {node: '>=10.16.0'}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /@firebase/analytics-compat/0.2.6_njwtynwpjtow7ydx3uqgcw75du:
     resolution: {integrity: sha512-4MqpVLFkGK7NJf/5wPEEP7ePBJatwYpyjgJ+wQHQGHfzaCDgntOnl9rL2vbVGGKCnRqWtZDIWhctB86UWXaX2Q==}
@@ -2012,7 +2023,7 @@ packages:
     resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
     dev: true
 
-  /@turbo/gen/1.10.16_wdmzj2hmns22fmop55zxa6xwzi:
+  /@turbo/gen/1.10.16_tcr4jd7o2xcht34meetgdreooe:
     resolution: {integrity: sha512-PzyluADjVuy5OcIi+/aRcD70OElQpRVRDdfZ9fH8G5Fv75lQcNrjd1bBGKmhjSw+g+eTEkXMGnY7s6gsCYjYTQ==}
     hasBin: true
     dependencies:
@@ -2024,7 +2035,7 @@ packages:
       minimatch: 9.0.3
       node-plop: 0.26.3
       proxy-agent: 6.3.1
-      ts-node: 10.9.1_wdmzj2hmns22fmop55zxa6xwzi
+      ts-node: 10.9.1_tcr4jd7o2xcht34meetgdreooe
       update-check: 1.5.4
       validate-npm-package-name: 5.0.0
     transitivePeerDependencies:
@@ -8410,7 +8421,7 @@ packages:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
     dev: true
 
-  /ts-node/10.9.1_wdmzj2hmns22fmop55zxa6xwzi:
+  /ts-node/10.9.1_tcr4jd7o2xcht34meetgdreooe:
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -8429,7 +8440,7 @@ packages:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 20.8.8
+      '@types/node': 17.0.45
       acorn: 8.10.0
       acorn-walk: 8.2.0
       arg: 4.1.3

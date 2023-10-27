@@ -1,4 +1,5 @@
-import { ActionIcon, Divider, Group, Menu, NavLink, Stack, Text, TextInput } from "@mantine/core"
+import { FeedbackFish } from "@feedback-fish/react"
+import { ActionIcon, Divider, Group, Menu, NavLink, Stack, Text, TextInput, Tooltip } from "@mantine/core"
 import { useHover } from "@mantine/hooks"
 import { modals } from "@mantine/modals"
 import { signOut, useMustBeSignedIn } from "@web/modules/firebase/auth"
@@ -7,7 +8,7 @@ import { Services, useServiceClientAccountCount, useServiceClients } from "@web/
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useRef } from "react"
-import { TbChartBar, TbChevronDown, TbLogout, TbPlus, TbSearch, TbUser, TbX } from "react-icons/tb"
+import { TbBug, TbChartBar, TbChevronDown, TbLogout, TbPlus, TbSearch, TbUser, TbX } from "react-icons/tb"
 
 
 export default function DashboardShell({ children }) {
@@ -83,6 +84,24 @@ export default function DashboardShell({ children }) {
             <div className="flex-1 min-w-0 bg-gray-50 rounded-lg">
                 {children}
             </div>
+        </div>
+
+        <div className="absolute bottom-4 right-4 bg-red-500">
+            <FeedbackFish
+                projectId={process.env.NEXT_PUBLIC_FEEDBACK_FISH_PROJECT_ID}
+                userId={user?.email || user?.uid}
+            >
+                <div>
+                    <Tooltip label="Submit feedback, bugs, etc.">
+                        <ActionIcon
+                            variant="filled" color="pg"
+                            className="fixed bottom-8 right-8 w-14 aspect-square h-auto text-2xl rounded-full shadow-lg"
+                        >
+                            <TbBug />
+                        </ActionIcon>
+                    </Tooltip>
+                </div>
+            </FeedbackFish>
         </div>
     </>)
 }
