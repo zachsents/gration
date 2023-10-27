@@ -159,6 +159,16 @@ export const HandleOAuth2Callback = onRequest(async (req, res) => {
         authState,
     })
 
+    const connectedAccountRef = serviceClientRef.collection(CONNECTED_ACCOUNTS_SUBCOLLECTION)
+        .doc(connectedAccount.id)
+
+    const isExisting = await connectedAccountRef.get().then(snapshot => snapshot.exists)
+
+    if (!isExisting && !connectedAccount.data.refreshToken)
+        return res.status(400).send(`The service didn't send the required information. This probably means you need to revoke the app's access to your account and try again.${authService.urls.revoke ? `<br><br><a href="${authService.urls.revoke}">Revoke access</a>` : ""}`)
+
+    connectedAccount.data.refreshToken
+
     await serviceClientRef.collection(CONNECTED_ACCOUNTS_SUBCOLLECTION).doc(connectedAccount.id).set({
         ...connectedAccount.data,
         updatedAt: FieldValue.serverTimestamp(),

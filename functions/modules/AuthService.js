@@ -8,6 +8,7 @@ import { Timestamp } from "firebase-admin/firestore"
  * @property {string} authorize
  * @property {string} token
  * @property {string} userInfo
+ * @property {string} revoke
  */
 
 

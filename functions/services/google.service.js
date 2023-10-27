@@ -6,6 +6,10 @@ import { CALLBACK_URL, parseScopes } from "../modules/util.js"
 export default {
     serviceId: "google",
 
+    urls: {
+        revoke: "https://myaccount.google.com/connections",
+    },
+
     generateAuthUrl: async ({ serviceClient, request, state }) => {
         const url = getOAuth2Client(serviceClient).generateAuthUrl({
             access_type: "offline",

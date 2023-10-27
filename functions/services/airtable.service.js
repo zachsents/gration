@@ -7,6 +7,7 @@ export default new AuthService("airtable", {
     debugPrefix: "Airtable",
     urls: {
         userInfo: "https://api.airtable.com/v0/meta/whoami",
+        revoke: "https://airtable.com/",
     },
 })
 
