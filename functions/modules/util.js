@@ -54,7 +54,9 @@ export function getAuthService(serviceId) {
  */
 
 
-export const CALLBACK_URL = "https://woahauth.com/oauth/callback"
+export const CALLBACK_URL = process.env.FUNCTIONS_EMULATOR === "true" ?
+    "http://127.0.0.1:5001/gration-f5cd8/us-central1/HandleOAuth2Callback" :
+    "https://woahauth.com/oauth/callback"
 
 
 export async function getAccountUsage(uid) {

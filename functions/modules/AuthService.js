@@ -23,6 +23,7 @@ export class AuthService {
      * @param {boolean} [options.usePKCE]
      * @param {string} [options.debugPrefix]
      * @param {(userInfo: object) => string} [options.selectUserId]
+     * @param {boolean} [options.expectRefreshToken]
      */
     constructor(serviceId, {
         baseUrl,
@@ -30,6 +31,7 @@ export class AuthService {
         usePKCE = false,
         debugPrefix = "",
         selectUserId = ({ id }) => id,
+        expectRefreshToken = true,
     } = {}) {
         this.serviceId = serviceId
         this.usePKCE = usePKCE
@@ -43,6 +45,7 @@ export class AuthService {
 
         this.debugPrefix = debugPrefix
         this.selectUserId = selectUserId
+        this.expectRefreshToken = expectRefreshToken
     }
 
     /**
@@ -91,7 +94,7 @@ export class AuthService {
         if (request.query.error)
             throw new Error(request.query.error_description || request.query.error || "Unknown error")
 
-        if (request.query.code_challenge != hashCodeVerifier(authState.codeVerifier))
+        if (this.usePKCE && request.query.code_challenge != hashCodeVerifier(authState.codeVerifier))
             throw new Error("Code challenge doesn't match")
 
         const tokenInfo = await fetch(this.urls.token, {
@@ -99,6 +102,7 @@ export class AuthService {
             headers: {
                 ...basicAuthorizationHeader(serviceClient),
                 "Content-Type": "application/x-www-form-urlencoded",
+                "Accept": "application/json",
             },
             body: new URLSearchParams({
                 code: request.query.code,
@@ -106,7 +110,7 @@ export class AuthService {
                 grant_type: "authorization_code",
                 ...(this.usePKCE && { code_verifier: authState.codeVerifier })
             }).toString()
-        }).then(res => res.json())
+        }).then(parseResponse)
 
         if (tokenInfo.error)
             throw new Error(tokenInfo.error_description || tokenInfo.error || "Unknown error")
@@ -119,8 +123,12 @@ export class AuthService {
                 accessToken: tokenInfo.access_token,
                 refreshToken: tokenInfo.refresh_token,
                 tokenType: tokenInfo.token_type,
-                ...tokenInfo.expires_in && { expiresAt: new Date(Date.now() + tokenInfo.expires_in * 1000) },
-                ...tokenInfo.refresh_expires_in && { refreshExpiresAt: new Date(Date.now() + tokenInfo.refresh_expires_in * 1000) },
+                expiresAt: tokenInfo.expires_in ?
+                    new Date(Date.now() + tokenInfo.expires_in * 1000) :
+                    null,
+                refreshExpiresAt: tokenInfo.refresh_expires_in ?
+                    new Date(Date.now() + tokenInfo.refresh_expires_in * 1000) :
+                    tokenInfo.refresh_token ? null : undefined,
                 ...userInfo.data,
             },
         }
@@ -134,7 +142,8 @@ export class AuthService {
      */
     async getFreshToken({ serviceClient, connectedAccount }) {
 
-        const isExpired = connectedAccount.expiresAt < Date.now() - 5 * 60 * 1000
+        const isExpired = connectedAccount.expiresAt === null ? false :
+            (connectedAccount.expiresAt < Date.now() - 5 * 60 * 1000)
 
         if (!isExpired) {
 
@@ -173,12 +182,13 @@ export class AuthService {
             headers: {
                 ...basicAuthorizationHeader(serviceClient),
                 "Content-Type": "application/x-www-form-urlencoded",
+                "Accept": "application/json",
             },
             body: new URLSearchParams({
                 refresh_token: connectedAccount.refreshToken,
                 grant_type: "refresh_token",
             }).toString()
-        }).then(res => res.json())
+        }).then(parseResponse)
 
         if (tokenInfo.error)
             throw new Error(tokenInfo.error_description || tokenInfo.error || "Unknown error")
@@ -189,8 +199,10 @@ export class AuthService {
             data: {
                 accessToken: tokenInfo.access_token,
                 refreshToken: tokenInfo.refresh_token,
-                ...tokenInfo.expires_in && { expiresAt: new Date(Date.now() + tokenInfo.expires_in * 1000) },
-                ...tokenInfo.refresh_expires_in && { refreshExpiresAt: new Date(Date.now() + tokenInfo.refresh_expires_in * 1000) },
+                expiresAt: tokenInfo.expires_in &&
+                    new Date(Date.now() + tokenInfo.expires_in * 1000),
+                refreshExpiresAt: tokenInfo.refresh_expires_in &&
+                    new Date(Date.now() + tokenInfo.refresh_expires_in * 1000),
             },
         }
     }
@@ -207,7 +219,7 @@ export class AuthService {
             throw new Error(userInfo.error_description || userInfo.error || "Unknown error")
 
         return {
-            id: this.selectUserId(userInfo),
+            id: this.selectUserId(userInfo).toString(),
             data: userInfo,
         }
     }
@@ -252,4 +264,12 @@ function isWithinCachedTimePeriod(timestamp, cacheTimeMins = 5) {
         return false
 
     return timestampMs > Date.now() - cacheTimeMins * 60 * 1000
+}
+
+
+/**
+ * @param {Response} res
+ */
+async function parseResponse(res) {
+    return res.json()
 }

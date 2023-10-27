@@ -22,6 +22,11 @@ export const SERVICE = {
         name: "Airtable",
         authType: SERVICE_AUTH_TYPE.OAUTH2,
     },
+    GITHUB: {
+        id: "github",
+        name: "GitHub",
+        authType: SERVICE_AUTH_TYPE.OAUTH2,
+    },
 }
 
 /**

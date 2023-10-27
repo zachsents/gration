@@ -134,6 +134,9 @@ export const AuthorizeOAuth2User = onRequest(async (req, res) => {
 
 export const HandleOAuth2Callback = onRequest(async (req, res) => {
 
+    if (req.query.error)
+        return res.status(400).send(req.query.error_description || req.query.error)
+
     if (!req.query.code || !req.query.state)
         return res.status(400).send("Malformed request")
 
@@ -162,14 +165,14 @@ export const HandleOAuth2Callback = onRequest(async (req, res) => {
     const connectedAccountRef = serviceClientRef.collection(CONNECTED_ACCOUNTS_SUBCOLLECTION)
         .doc(connectedAccount.id)
 
-    const isExisting = await connectedAccountRef.get().then(snapshot => snapshot.exists)
+    if (authService.expectRefreshToken) {
+        const isExisting = await connectedAccountRef.get().then(snapshot => snapshot.exists)
 
-    if (!isExisting && !connectedAccount.data.refreshToken)
-        return res.status(400).send(`The service didn't send the required information. This probably means you need to revoke the app's access to your account and try again.${authService.urls.revoke ? `<br><br><a href="${authService.urls.revoke}">Revoke access</a>` : ""}`)
+        if (!isExisting && !connectedAccount.data.refreshToken)
+            return res.status(400).send(`The service didn't send the required information. This probably means you need to revoke the app's access to your account and try again.${authService.urls.revoke ? `<br><br><a href="${authService.urls.revoke}">Revoke access</a>` : ""}`)
+    }
 
-    connectedAccount.data.refreshToken
-
-    await serviceClientRef.collection(CONNECTED_ACCOUNTS_SUBCOLLECTION).doc(connectedAccount.id).set({
+    await connectedAccountRef.set({
         ...connectedAccount.data,
         updatedAt: FieldValue.serverTimestamp(),
         ...authState.appUserId && { appUsers: FieldValue.arrayUnion(authState.appUserId) },
