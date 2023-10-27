@@ -16,3 +16,8 @@ export const PRICE_IDS = {
 }
 
 export const FREE_ACCOUNT_LIMIT = 100
+
+export const STRIPE_ROLE = {
+    STARTER: "starter",
+    BUSINESS: "business",
+}

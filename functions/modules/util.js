@@ -1,5 +1,8 @@
 import { randomBytes } from "crypto"
 import authServices from "../services/index.js"
+import { db } from "../init.js"
+import { CONNECTED_ACCOUNTS_SUBCOLLECTION, SERVICE_CLIENTS_COLLECTION, STRIPE_PRODUCTS_COLLECTION } from "shared/firestore.js"
+import { PRODUCT_IDS } from "shared/stripe.js"
 
 
 export function parseScopes(str) {
@@ -52,3 +55,30 @@ export function getAuthService(serviceId) {
 
 
 export const CALLBACK_URL = "https://woahauth.com/oauth/callback"
+
+
+export async function getAccountUsage(uid) {
+    const serviceClientIds = await db.collection(SERVICE_CLIENTS_COLLECTION)
+        .where("owner", "==", uid).get()
+        .then(snapshot => snapshot.docs.map(doc => doc.id))
+
+    const counts = await Promise.all(
+        serviceClientIds.map(
+            serviceClientId => db.collection(SERVICE_CLIENTS_COLLECTION).doc(serviceClientId)
+                .collection(CONNECTED_ACCOUNTS_SUBCOLLECTION).count().get()
+                .then(snapshot => snapshot.data().count)
+        )
+    )
+
+    return counts.reduce((a, b) => a + b, 0)
+}
+
+
+export async function getProductInfo(productName) {
+    const productId = PRODUCT_IDS[productName]
+    if (!productId)
+        return
+
+    return db.collection(STRIPE_PRODUCTS_COLLECTION)
+        .doc(productId).get().then(doc => doc.data())
+}

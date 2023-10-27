@@ -3,8 +3,9 @@ import { HttpsError, onCall, onRequest } from "firebase-functions/v2/https"
 import Joi from "joi"
 import { AUTH_STATE_COLLECTION, CONNECTED_ACCOUNTS_SUBCOLLECTION, SERVICE_CLIENTS_COLLECTION } from "shared/firestore.js"
 import { SERVICE, SERVICE_AUTH_TYPE } from "shared/services.js"
-import { db } from "./init.js"
-import { generateSecretKey, getAuthService } from "./modules/util.js"
+import { FREE_ACCOUNT_LIMIT } from "shared/stripe.js"
+import { auth, db } from "./init.js"
+import { generateSecretKey, getAccountUsage, getAuthService, getProductInfo } from "./modules/util.js"
 
 
 /**
@@ -97,6 +98,16 @@ export const AuthorizeOAuth2User = onRequest(async (req, res) => {
     if (serviceClient.authType !== SERVICE_AUTH_TYPE.OAUTH2)
         return res.status(400).send(`Service client ${serviceClientId} is not an OAuth2 client`)
 
+    const owner = await auth.getUser(serviceClient.owner)
+    const stripeProduct = await getProductInfo(owner.customClaims.stripeRole)
+    const accountLimit = stripeProduct ?
+        parseInt(stripeProduct.metadata.accountLimit) :
+        FREE_ACCOUNT_LIMIT
+    const ownerUsage = await getAccountUsage(serviceClient.owner)
+
+    if (ownerUsage >= accountLimit)
+        return res.status(403).send("Account limit reached")
+
     const authService = getAuthService(serviceClient.serviceId)
 
     if (!authService)
@@ -134,6 +145,9 @@ export const HandleOAuth2Callback = onRequest(async (req, res) => {
     /** @type {import("./modules/util.js").ServiceClient} */
     const serviceClient = await serviceClientRef.get().then(snapshot => snapshot.data())
 
+    if (!serviceClient)
+        return res.status(404).send(`Service client ${authState.serviceClientId} not found`)
+
     const authService = getAuthService(serviceClient.serviceId)
 
     if (!authService)
@@ -151,27 +165,13 @@ export const HandleOAuth2Callback = onRequest(async (req, res) => {
         ...authState.appUserId && { appUsers: FieldValue.arrayUnion(authState.appUserId) },
     }, { merge: true })
 
-    res.send("<script>window.onload = () => window.close()</script>Logged in. You may close this window.")
+    res.send("<script>window.close()</script>Logged in. You may close this window.")
 })
 
 
 export const GetAccountsUsage = onCall(callablePipeline(
     requireAuth(),
-    async request => {
-        const serviceClientIds = await db.collection(SERVICE_CLIENTS_COLLECTION)
-            .where("owner", "==", request.auth.uid).get()
-            .then(snapshot => snapshot.docs.map(doc => doc.id))
-
-        const counts = await Promise.all(
-            serviceClientIds.map(
-                serviceClientId => db.collection(SERVICE_CLIENTS_COLLECTION).doc(serviceClientId)
-                    .collection(CONNECTED_ACCOUNTS_SUBCOLLECTION).count().get()
-                    .then(snapshot => snapshot.data().count)
-            )
-        )
-
-        return counts.reduce((a, b) => a + b, 0)
-    },
+    async request => getAccountUsage(request.auth.uid),
 ))
 
 
@@ -227,5 +227,3 @@ function callablePipeline(...functions) {
         return result
     }
 }
-
-

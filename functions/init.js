@@ -8,3 +8,6 @@ setGlobalOptions({ maxInstances: 10 })
 
 export const db = admin.firestore()
 db.settings({ ignoreUndefinedProperties: true })
+
+
+export const auth = admin.auth()
