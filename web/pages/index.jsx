@@ -2,7 +2,7 @@ import { Button, Center, Divider, Stack, Text, Title } from "@mantine/core"
 import BrandCarousel from "@web/components/BrandCarousel"
 import { signOut, useMustBeSignedIn } from "@web/modules/firebase/auth"
 import Link from "next/link"
-import { TbBrandX, TbDashboard, TbExternalLink, TbLogout } from "react-icons/tb"
+import { TbBrandX, TbDashboard, TbExternalLink, TbLogout, TbMail } from "react-icons/tb"
 
 
 export default function IndexPage() {
@@ -17,7 +17,7 @@ export default function IndexPage() {
                         Welcome to WoahAuth
                     </Title>
                     <Text className="text-center text-lg">
-                        You're on the waitlist!
+                        You've joined! 🎉
                     </Text>
                     <Text className="text-center text-gray">
                         Get hyped! Connecting to your users' accounts is about to get a whole lot easier.
@@ -42,7 +42,17 @@ export default function IndexPage() {
                         @Zach_Sents
                     </Button>
 
-                    <Divider className="mt-20" />
+                    <Text className="text-gray text-center mt-4">
+                        Email me if you have any questions.
+                    </Text>
+                    <Button
+                        color="pg" leftIcon={<TbMail />} variant="light"
+                        component="a" target="_blank" href="mailto:info@woahauth.com"
+                    >
+                        info@woahauth.com
+                    </Button>
+
+                    <Divider className="mt-4" />
 
                     <Center>
                         <Button onClick={signOut} leftIcon={<TbLogout />}>

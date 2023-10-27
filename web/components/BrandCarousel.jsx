@@ -16,8 +16,9 @@ export default function BrandCarousel({ showComingSoon = false }) {
 
     const handleScroll = () => {
         if (embla) {
-            const index = Math.floor(Math.max(0, Math.min(1, embla.scrollProgress())) * Services.length)
-            setCurrentBrand(Services[index]?.name || "...")
+
+            const index = Math.floor(Math.max(0, Math.min(1, embla.scrollProgress())) * ShownServices.length)
+            setCurrentBrand(ShownServices[index]?.name || "...")
         }
     }
 
@@ -68,7 +69,7 @@ export default function BrandCarousel({ showComingSoon = false }) {
                 getEmblaApi={setEmbla}
                 className="w-full mt-xl md:mt-0"
             >
-                {Services.filter(service => !service.hidden).map(service => (
+                {ShownServices.map(service => (
                     <Carousel.Slide key={service.name}>
                         <Center
                             bg={showComingSoon && !service.built ? "gray" : service.color}
@@ -85,3 +86,6 @@ export default function BrandCarousel({ showComingSoon = false }) {
         </Center>
     </>)
 }
+
+
+const ShownServices = Services.filter(service => !service.hidden)

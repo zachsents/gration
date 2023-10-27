@@ -15,8 +15,8 @@ export default function WaitlistAlert() {
         }
 
         notifications.show({
-            title: "We're accepting waitlisters!",
-            message: "Sign in to automatically join the waitlist.",
+            title: "We've launched!",
+            message: "Sign in to start adding integrations to your SaaS.",
             id: "waitlist-notification",
             autoClose: false,
             icon: "👋",
