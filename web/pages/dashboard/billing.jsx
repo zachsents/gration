@@ -1,11 +1,11 @@
-import { Button, Card, Center, Group, Progress, Stack, Switch, Text, ThemeIcon, Title } from "@mantine/core"
+import { Button, Card, Center, Divider, Group, Progress, Stack, Switch, Text, ThemeIcon, Title } from "@mantine/core"
 import DashboardShell from "@web/components/DashboardShell"
 import { useCreateCheckoutSession, useGoToCustomerPortal, useProductInfo, useUserClaims } from "@web/modules/stripe"
 import { useFunctionQuery } from "@zachsents/fire-query"
 import Head from "next/head"
 import { useState } from "react"
 import { TbArrowUpRight, TbPigMoney, TbStar } from "react-icons/tb"
-import { FREE_ACCOUNT_LIMIT } from "shared/stripe"
+import { FREE_ACCOUNT_LIMIT, STRIPE_ROLE } from "shared/stripe"
 
 
 export default function DashboardBillingPage() {
@@ -16,8 +16,8 @@ export default function DashboardBillingPage() {
 
     const userClaims = useUserClaims()
     const stripeRole = userClaims.data?.stripeRole
-    const isStarter = stripeRole === "starter"
-    const isBusiness = stripeRole === "business"
+    const isStarter = stripeRole === STRIPE_ROLE.STARTER
+    const isBusiness = stripeRole === STRIPE_ROLE.BUSINESS
 
     const productInfoQuery = useProductInfo(stripeRole)
     const countQuery = useFunctionQuery("GetAccountsUsage", {}, {
@@ -62,12 +62,14 @@ export default function DashboardBillingPage() {
                 <Stack>
                     {!isStarter && !isBusiness &&
                         <BillingCard
-                            productName="starter"
+                            productName={STRIPE_ROLE.STARTER}
+                            monthlyPrice={19} annualPrice={199}
                             {...{ annual, setAnnual }}
                         />}
                     {!isBusiness &&
                         <BillingCard
-                            productName="business" color="primary"
+                            productName={STRIPE_ROLE.BUSINESS} color="primary"
+                            monthlyPrice={89} annualPrice={949}
                             {...{ annual, setAnnual }}
                         />}
                 </Stack>
@@ -86,7 +88,7 @@ export default function DashboardBillingPage() {
 }
 
 
-function BillingCard({ productName, color = "pg", annual, setAnnual }) {
+function BillingCard({ productName, color = "pg", annual, setAnnual, annualPrice, monthlyPrice }) {
 
     const productInfoQuery = useProductInfo(productName)
     const accountLimitLabel = parseInt(productInfoQuery.data?.metadata.accountLimit).toLocaleString()
@@ -96,19 +98,27 @@ function BillingCard({ productName, color = "pg", annual, setAnnual }) {
     return (
         <Card className="base-border p-xl">
             <Group position="apart">
-                <Stack className="gap-xs">
-                    <Group>
-                        <ThemeIcon color={color} size="xl" className="text-xl">
-                            <TbStar />
-                        </ThemeIcon>
-                        <Text className="text-3xl font-bold">
-                            {productInfoQuery.data?.name}
+                <Group>
+                    <Stack className="gap-xs">
+                        <Group>
+                            <ThemeIcon color={color} size="xl" className="text-xl">
+                                <TbStar />
+                            </ThemeIcon>
+                            <Text className="text-3xl font-bold">
+                                {productInfoQuery.data?.name}
+                            </Text>
+                        </Group>
+                        <Text>
+                            up to <Text span color={color} className="font-bold">{accountLimitLabel}</Text> connected user accounts
                         </Text>
+                    </Stack>
+                    <Divider orientation="vertical" />
+                    <Group className="gap-1 items-end">
+                        <Text className="text-4xl font-bold">${annual ? annualPrice : monthlyPrice}</Text>
+                        <Text className="text-sm text-gray">/</Text>
+                        <Text className="text-sm text-gray">{annual ? "year" : "month"}</Text>
                     </Group>
-                    <Text>
-                        up to <Text span color={color} className="font-bold">{accountLimitLabel}</Text> connected user accounts
-                    </Text>
-                </Stack>
+                </Group>
                 <Group className="gap-xl">
                     <Stack className="gap-0 items-end">
                         <Text className="text-xs text-gray">Billing Frequency</Text>
