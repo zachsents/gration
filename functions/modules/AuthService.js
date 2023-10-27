@@ -20,19 +20,19 @@ export class AuthService {
      * @param {string} [options.baseUrl] If provided, will be used to construct the auth and token URLs using 
      * default paths of /authorize and /token.
      * @param {URLs} [options.urls]
-     * @param {boolean} [options.useCodeChallenge]
+     * @param {boolean} [options.usePKCE]
      * @param {string} [options.debugPrefix]
      * @param {(userInfo: object) => string} [options.selectUserId]
      */
     constructor(serviceId, {
         baseUrl,
         urls,
-        useCodeChallenge = false,
+        usePKCE = false,
         debugPrefix = "",
         selectUserId = ({ id }) => id,
     } = {}) {
         this.serviceId = serviceId
-        this.useCodeChallenge = useCodeChallenge
+        this.usePKCE = usePKCE
 
         /** @type {URLs} */
         this.urls = urls || {}
@@ -54,7 +54,7 @@ export class AuthService {
      */
     async generateAuthUrl({ serviceClient, request, state }) {
 
-        if (this.useCodeChallenge) {
+        if (this.usePKCE) {
             var codeVerifier = randomBytes(64).toString("base64url")
             var codeChallenge = hashCodeVerifier(codeVerifier)
         }
@@ -65,7 +65,7 @@ export class AuthService {
             response_type: "code",
             scope: [...new Set([...serviceClient.scopes, ...parseScopes(request.query.scopes)])].join(" "),
             state,
-            ...this.useCodeChallenge && {
+            ...this.usePKCE && {
                 code_challenge: codeChallenge,
                 code_challenge_method: "S256",
             },
@@ -74,7 +74,7 @@ export class AuthService {
         return {
             url: `${this.urls.authorize}?${params.toString()}`,
             additionalState: {
-                ...this.useCodeChallenge && { codeVerifier },
+                ...this.usePKCE && { codeVerifier },
             },
         }
     }
@@ -104,7 +104,7 @@ export class AuthService {
                 code: request.query.code,
                 redirect_uri: CALLBACK_URL,
                 grant_type: "authorization_code",
-                ...(this.useCodeChallenge && { code_verifier: authState.codeVerifier })
+                ...(this.usePKCE && { code_verifier: authState.codeVerifier })
             }).toString()
         }).then(res => res.json())
 
