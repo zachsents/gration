@@ -8,6 +8,7 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { useRef } from "react"
 import { TbChartBar, TbChevronDown, TbLogout, TbPlus, TbSearch, TbUser, TbX } from "react-icons/tb"
+import LoggedInOverlay from "./LoggedInOverlay"
 
 
 export default function DashboardShell({ children }) {
@@ -21,7 +22,7 @@ export default function DashboardShell({ children }) {
         selector: client => `${client.nickname || ""} ${client.serviceId}`,
     })
 
-    return (
+    return (<>
         <div className="w-screen min-h-screen flex gap-md items-stretch p-md relative">
             <Stack className="w-56 sticky top-md h-full">
                 <Text
@@ -84,7 +85,8 @@ export default function DashboardShell({ children }) {
                 {children}
             </div>
         </div>
-    )
+        <LoggedInOverlay />
+    </>)
 }
 
 
