@@ -1,4 +1,4 @@
-import { Accordion, ActionIcon, Button, Center, CopyButton, Group, Loader, Menu, Stack, Table, Text, Timeline, Title, Tooltip } from "@mantine/core"
+import { ActionIcon, Button, Center, CopyButton, Group, Loader, Menu, Stack, Table, Tabs, Text, Timeline, Title, Tooltip } from "@mantine/core"
 import { useForm } from "@mantine/form"
 import { useLocalStorage } from "@mantine/hooks"
 import { modals } from "@mantine/modals"
@@ -44,14 +44,9 @@ function Inner() {
     const { data: serviceClient, update, delete: deleteClient } = useCurrentServiceClient()
     const serviceType = Services.find(service => service.id === serviceClient.serviceId)
 
-    const [accordionValue, setAccordionValue] = useLocalStorage({
-        key: "serviceClientConfigDashboardAccordion",
-        defaultValue: [
-            "secretKey",
-            "gettingStarted",
-            "oauthClientConfig",
-            "manageAccounts",
-        ],
+    const [tabValue, setTabValue] = useLocalStorage({
+        key: "serviceClientConfigDashboardTabs",
+        defaultValue: "gettingStarted",
     })
 
     const form = useForm({
@@ -133,147 +128,137 @@ function Inner() {
                 </Menu>
             </Group>
 
-            <Accordion multiple value={accordionValue} onChange={setAccordionValue} classNames={{
-                label: "text-gray uppercase font-bold text-xs py-2",
-                control: "p-0 border-solid border-0 border-t-1 border-gray-400",
-                content: "p-0 pt-2 pb-12",
-                item: "border-none",
-                chevron: "text-gray",
-            }}>
-                <Accordion.Item value="secretKey">
-                    <Accordion.Control>
-                        Secret Key
-                    </Accordion.Control>
-                    <Accordion.Panel>
-                        <Stack>
-                            <Text className="font-bold">⚠️ Do not expose your secret key on the frontend!</Text>
-                            <CopyableMono breakAnywhere>
-                                {serviceClient.secretKey}
-                            </CopyableMono>
-                            <Group spacing="xs">
-                                <Tooltip label="WARNING: this will make the current secret key invalid.">
-                                    <Button
-                                        leftIcon={<TbRefresh />} compact color="pg"
-                                        onClick={rollSecretKey} loading={rollSecretKeyMutation.isLoading}
-                                    >
-                                        Roll Secret Key
-                                    </Button>
-                                </Tooltip>
-                            </Group>
-                        </Stack>
-                    </Accordion.Panel>
-                </Accordion.Item>
+            <Tabs
+                variant="pills" color="gray.4"
+                value={tabValue} onTabChange={setTabValue}
+                classNames={{
 
-                <Accordion.Item value="gettingStarted">
-                    <Accordion.Control>
-                        Getting Started
-                    </Accordion.Control>
-                    <Accordion.Panel>
-                        <Timeline active={-1}>
-                            <Timeline.Item bullet={<TbSettings />} title="1. Add WoahAuth redirect URL to OAuth client">
-                                <Stack align="flex-start" spacing="xs">
-                                    <Text className="text-gray text-sm">
-                                        In {serviceType.dashboardName || serviceType.name}, add the following redirect URL to your OAuth client:
-                                    </Text>
-                                    <CopyableMono>
-                                        {redirectUrl}
-                                    </CopyableMono>
-                                </Stack>
-                            </Timeline.Item>
+                    tabLabel: "uppercase font-bold text-xs",
+                    tab: "text-gray data-[active=true]:text-black rounded-full",
+                    panel: "p-0 pt-8 pb-12",
+                }}
+            >
+                <Tabs.List>
+                    <Tabs.Tab value="gettingStarted">Getting Started</Tabs.Tab>
+                    <Tabs.Tab value="secretKey">Secret Key</Tabs.Tab>
+                    <Tabs.Tab value="oauthClientConfig">OAuth Client Configuration</Tabs.Tab>
+                    <Tabs.Tab value="manageAccounts">Manage Accounts</Tabs.Tab>
+                </Tabs.List>
 
-                            <Timeline.Item bullet={<TbLink />} title="2. Authorize users with this link">
-                                <Stack align="flex-start" spacing="xs">
-                                    <Text className="text-gray text-sm">
-                                        Link users to the following URL to authorize their {serviceType.name} account:
-                                    </Text>
-                                    <CopyableMono value={authorizeUrlCopy}>
-                                        {authorizeUrlDisplay}
-                                    </CopyableMono>
-                                </Stack>
-                            </Timeline.Item>
+                <Tabs.Panel value="secretKey">
+                    <Stack>
+                        <Text className="font-bold">⚠️ Do not expose your secret key on the frontend!</Text>
+                        <CopyableMono breakAnywhere>
+                            {serviceClient.secretKey}
+                        </CopyableMono>
+                        <Group spacing="xs">
+                            <Tooltip label="WARNING: this will make the current secret key invalid.">
+                                <Button
+                                    leftIcon={<TbRefresh />} compact color="pg"
+                                    onClick={rollSecretKey} loading={rollSecretKeyMutation.isLoading}
+                                >
+                                    Roll Secret Key
+                                </Button>
+                            </Tooltip>
+                        </Group>
+                    </Stack>
+                </Tabs.Panel>
 
-                            <Timeline.Item bullet={<TbUsers />} title="3. List a user's connected accounts using the WoahAuth API">
-                                <Stack align="flex-start" spacing="xs">
-                                    <Text className="text-gray text-sm">
-                                        Use the following code to list a user's connected accounts:
-                                    </Text>
-                                    <Prism language="js" colorScheme="dark" className="self-stretch">{listUsersCodeSample(serviceClient.id)}</Prism>
-                                </Stack>
-                            </Timeline.Item>
-
-                            <Timeline.Item bullet={<TbCode />} title="4. Get a fresh access token using the WoahAuth API">
-                                <Stack align="flex-start" spacing="xs">
-                                    <Text className="text-gray text-sm">
-                                        Use the following code to get a fresh access token for a connected account:
-                                    </Text>
-                                    <Prism language="js" colorScheme="dark" className="self-stretch">{getTokenCodeSample(serviceClient.id)}</Prism>
-                                </Stack>
-                            </Timeline.Item>
-                        </Timeline>
-                    </Accordion.Panel>
-                </Accordion.Item>
-
-                <Accordion.Item value="oauthClientConfig">
-                    <Accordion.Control>
-                        OAuth Client Configuration
-                    </Accordion.Control>
-                    <Accordion.Panel>
-                        <form onSubmit={form.onSubmit(handleSubmit)}>
-                            <Stack className="relative pt-md">
-                                {form.isDirty() &&
-                                    <Group className="gap-2 absolute top-0 right-0">
-                                        <Button compact type="submit" color="pg">Save Changes</Button>
-                                        <Button
-                                            compact type="submit" variant="subtle" color="red"
-                                            onClick={form.reset}>
-                                            Discard
-                                        </Button>
-                                    </Group>}
-
-
-                                <OAuthClientIdInput
-                                    sourceName={serviceType.dashboardName || serviceType.name}
-                                    {...form.getInputProps("clientId")}
-                                />
-                                <OAuthClientSecretInput
-                                    sourceName={serviceType.dashboardName || serviceType.name} withOverlay
-                                    {...form.getInputProps("clientSecret")}
-                                />
-                                <OAuthClientScopesInput
-                                    scopesListUrl={serviceType.scopesListUrl} scopesList={serviceType.scopesList}
-                                    {...form.getInputProps("scopes")}
-                                />
+                <Tabs.Panel value="gettingStarted">
+                    <Timeline active={-1}>
+                        <Timeline.Item bullet={<TbSettings />} title="1. Add WoahAuth redirect URL to OAuth client">
+                            <Stack align="flex-start" spacing="xs">
+                                <Text className="text-gray text-sm">
+                                    In {serviceType.dashboardName || serviceType.name}, add the following redirect URL to your OAuth client:
+                                </Text>
+                                <CopyableMono>
+                                    {redirectUrl}
+                                </CopyableMono>
                             </Stack>
-                        </form>
-                    </Accordion.Panel>
-                </Accordion.Item>
+                        </Timeline.Item>
 
-                <Accordion.Item value="manageAccounts">
-                    <Accordion.Control>
-                        Manage Accounts
-                    </Accordion.Control>
-                    <Accordion.Panel>
-                        <Table>
-                            <thead>
-                                <tr>
-                                    <th>Account ID</th>
-                                    <th>Associated User IDs</th>
-                                    <th className="w-1/4">Access Token</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {connectedAccounts.data?.map(account =>
-                                    <AccountRow
-                                        account={account} serviceClientId={serviceClient.id} serviceClientSecretKey={serviceClient.secretKey}
-                                        key={account.id}
-                                    />
-                                )}
-                            </tbody>
-                        </Table>
-                    </Accordion.Panel>
-                </Accordion.Item>
-            </Accordion>
+                        <Timeline.Item bullet={<TbLink />} title="2. Authorize users with this link">
+                            <Stack align="flex-start" spacing="xs">
+                                <Text className="text-gray text-sm">
+                                    Link users to the following URL to authorize their {serviceType.name} account:
+                                </Text>
+                                <CopyableMono value={authorizeUrlCopy}>
+                                    {authorizeUrlDisplay}
+                                </CopyableMono>
+                            </Stack>
+                        </Timeline.Item>
+
+                        <Timeline.Item bullet={<TbUsers />} title="3. List a user's connected accounts using the WoahAuth API">
+                            <Stack align="flex-start" spacing="xs">
+                                <Text className="text-gray text-sm">
+                                    Use the following code to list a user's connected accounts:
+                                </Text>
+                                <Prism language="js" colorScheme="dark" className="self-stretch">{listUsersCodeSample(serviceClient.id)}</Prism>
+                            </Stack>
+                        </Timeline.Item>
+
+                        <Timeline.Item bullet={<TbCode />} title="4. Get a fresh access token using the WoahAuth API">
+                            <Stack align="flex-start" spacing="xs">
+                                <Text className="text-gray text-sm">
+                                    Use the following code to get a fresh access token for a connected account:
+                                </Text>
+                                <Prism language="js" colorScheme="dark" className="self-stretch">{getTokenCodeSample(serviceClient.id)}</Prism>
+                            </Stack>
+                        </Timeline.Item>
+                    </Timeline>
+                </Tabs.Panel>
+
+                <Tabs.Panel value="oauthClientConfig">
+                    <form onSubmit={form.onSubmit(handleSubmit)}>
+                        <Stack className="relative">
+                            {form.isDirty() &&
+                                <Group className="gap-2 absolute top-0 right-0">
+                                    <Button compact type="submit" color="pg">Save Changes</Button>
+                                    <Button
+                                        compact type="submit" variant="subtle" color="red"
+                                        onClick={form.reset}>
+                                        Discard
+                                    </Button>
+                                </Group>}
+
+
+                            <OAuthClientIdInput
+                                sourceName={serviceType.dashboardName || serviceType.name}
+                                {...form.getInputProps("clientId")}
+                            />
+                            <OAuthClientSecretInput
+                                sourceName={serviceType.dashboardName || serviceType.name} withOverlay
+                                {...form.getInputProps("clientSecret")}
+                            />
+                            <OAuthClientScopesInput
+                                scopesListUrl={serviceType.scopesListUrl} scopesList={serviceType.scopesList}
+                                {...form.getInputProps("scopes")}
+                            />
+                        </Stack>
+                    </form>
+                </Tabs.Panel>
+
+                <Tabs.Panel value="manageAccounts">
+                    <Table>
+                        <thead>
+                            <tr>
+                                <th>Account ID</th>
+                                <th>Associated User IDs</th>
+                                <th className="w-1/4">Access Token</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {connectedAccounts.data?.map(account =>
+                                <AccountRow
+                                    account={account} serviceClientId={serviceClient.id} serviceClientSecretKey={serviceClient.secretKey}
+                                    key={account.id}
+                                />
+                            )}
+                        </tbody>
+                    </Table>
+                </Tabs.Panel>
+            </Tabs>
         </Stack>
     )
 }
