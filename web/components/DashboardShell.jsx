@@ -8,7 +8,6 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { useRef } from "react"
 import { TbChartBar, TbChevronDown, TbLogout, TbPlus, TbSearch, TbUser, TbX } from "react-icons/tb"
-import LoggedInOverlay from "./LoggedInOverlay"
 
 
 export default function DashboardShell({ children }) {
@@ -85,7 +84,6 @@ export default function DashboardShell({ children }) {
                 {children}
             </div>
         </div>
-        <LoggedInOverlay />
     </>)
 }
 

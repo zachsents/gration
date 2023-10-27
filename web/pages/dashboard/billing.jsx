@@ -1,10 +1,11 @@
-import { Button, Card, Center, Divider, Group, Progress, Stack, Switch, Text, ThemeIcon, Title } from "@mantine/core"
+import { Button, Card, Center, Divider, Group, LoadingOverlay, Progress, Stack, Switch, Text, ThemeIcon, Title } from "@mantine/core"
 import DashboardShell from "@web/components/DashboardShell"
 import { useCreateCheckoutSession, useGoToCustomerPortal, useProductInfo, useUserClaims } from "@web/modules/stripe"
 import { useFunctionQuery } from "@zachsents/fire-query"
 import Head from "next/head"
 import { useState } from "react"
 import { TbArrowUpRight, TbPigMoney, TbStar } from "react-icons/tb"
+import { useUser } from "reactfire"
 import { FREE_ACCOUNT_LIMIT, STRIPE_ROLE } from "shared/stripe"
 
 
@@ -14,6 +15,7 @@ export default function DashboardBillingPage() {
 
     const [goToPortal, portalMutation] = useGoToCustomerPortal()
 
+    const { data: user } = useUser()
     const userClaims = useUserClaims()
     const stripeRole = userClaims.data?.stripeRole
     const isStarter = stripeRole === STRIPE_ROLE.STARTER
@@ -21,12 +23,16 @@ export default function DashboardBillingPage() {
 
     const productInfoQuery = useProductInfo(stripeRole)
     const countQuery = useFunctionQuery("GetAccountsUsage", {}, {
-        refetchInterval: 1000 * 30 // 30 seconds
+        refetchInterval: 1000 * 30, // 30 seconds
+        queryKey: ["GetAccountsUsage", user?.uid],
+        enabled: !!user?.uid,
     })
 
     const accountsUsed = countQuery.data?.data ?? 0
     const accountsTotal = productInfoQuery.data?.metadata.accountLimit ?
         parseInt(productInfoQuery.data?.metadata.accountLimit) : FREE_ACCOUNT_LIMIT
+
+    const isLoading = userClaims.isLoading || productInfoQuery.isLoading
 
     return (<>
         <Head>
@@ -37,7 +43,7 @@ export default function DashboardBillingPage() {
                 <Title order={2}>Usage & Billing</Title>
 
                 <Group grow noWrap className="items-stretch">
-                    <Card className="base-border p-xl">
+                    <Card className="base-border p-xl relative">
                         <Text className="text-xs uppercase font-bold">
                             Connected User Accounts
                         </Text>
@@ -48,14 +54,24 @@ export default function DashboardBillingPage() {
                             value={accountsTotal > 0 ? (100 * accountsUsed / accountsTotal) : 0}
                             size="lg" className="rounded-full mt-sm"
                         />
+                        <LoadingOverlay
+                            visible={isLoading}
+                            overlayBlur={5}
+                            loaderProps={{ variant: "bars", size: "sm" }}
+                        />
                     </Card>
-                    <Card className="p-xl bg-pg-600">
+                    <Card className="p-xl bg-pg-600 relative">
                         <Text className="text-xs uppercase font-bold text-pg-100">
                             Current Plan
                         </Text>
                         <Text className="text-3xl text-white font-bold mt-md">
                             {productInfoQuery.data?.name ?? "Free"}
                         </Text>
+                        <LoadingOverlay
+                            visible={isLoading || countQuery.isLoading}
+                            overlayBlur={5}
+                            loaderProps={{ variant: "bars", size: "sm" }}
+                        />
                     </Card>
                 </Group>
 

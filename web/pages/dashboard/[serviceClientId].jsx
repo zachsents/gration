@@ -23,13 +23,21 @@ export default function DashboardPage() {
 
     const { data: serviceClient, isLoading } = useCurrentServiceClient()
 
+    const [tabValue, setTabValue] = useLocalStorage({
+        key: "serviceClientConfigDashboardTabs",
+        defaultValue: "gettingStarted",
+    })
+
     return (<>
         <Head>
             <title>{serviceClient?.nickname || "Loading..."} | WoahAuth</title>
         </Head>
         <DashboardShell>
             {!isLoading && serviceClient ?
-                <Inner key={serviceClient.id} /> :
+                <Inner
+                    {...{ tabValue, setTabValue }}
+                    key={serviceClient.id}
+                /> :
                 <Center className="w-full h-full">
                     <Loader variant="bars" />
                 </Center>}
@@ -37,17 +45,12 @@ export default function DashboardPage() {
     </>)
 }
 
-function Inner() {
+function Inner({ tabValue, setTabValue }) {
 
     const router = useRouter()
 
     const { data: serviceClient, update, delete: deleteClient } = useCurrentServiceClient()
     const serviceType = Services.find(service => service.id === serviceClient.serviceId)
-
-    const [tabValue, setTabValue] = useLocalStorage({
-        key: "serviceClientConfigDashboardTabs",
-        defaultValue: "gettingStarted",
-    })
 
     const form = useForm({
         initialValues: {
