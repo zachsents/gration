@@ -20,6 +20,7 @@ export default function DashboardBillingPage() {
     const stripeRole = userClaims.data?.stripeRole
     const isStarter = stripeRole === STRIPE_ROLE.STARTER
     const isBusiness = stripeRole === STRIPE_ROLE.BUSINESS
+    const isFree = !isStarter && !isBusiness
 
     const productInfoQuery = useProductInfo(stripeRole)
     const countQuery = useFunctionQuery("GetAccountsUsage", {}, {
@@ -80,12 +81,14 @@ export default function DashboardBillingPage() {
                         <BillingCard
                             productName={STRIPE_ROLE.STARTER}
                             monthlyPrice={19} annualPrice={199}
+                            shouldGoToPortal={!isFree}
                             {...{ annual, setAnnual }}
                         />}
                     {!isBusiness &&
                         <BillingCard
                             productName={STRIPE_ROLE.BUSINESS} color="primary"
                             monthlyPrice={89} annualPrice={949}
+                            shouldGoToPortal={!isFree}
                             {...{ annual, setAnnual }}
                         />}
                 </Stack>
@@ -104,12 +107,13 @@ export default function DashboardBillingPage() {
 }
 
 
-function BillingCard({ productName, color = "pg", annual, setAnnual, annualPrice, monthlyPrice }) {
+function BillingCard({ productName, color = "pg", annual, setAnnual, annualPrice, monthlyPrice, shouldGoToPortal = false }) {
 
     const productInfoQuery = useProductInfo(productName)
     const accountLimitLabel = parseInt(productInfoQuery.data?.metadata.accountLimit).toLocaleString()
 
     const [createCheckoutSession, checkoutSessionMutation] = useCreateCheckoutSession(productName, annual)
+    const [goToPortal, portalMutation] = useGoToCustomerPortal()
 
     return (
         <Card className="base-border p-xl">
@@ -147,9 +151,10 @@ function BillingCard({ productName, color = "pg", annual, setAnnual, annualPrice
                     </Stack>
                     <Button
                         rightIcon={<TbArrowUpRight />} color={color}
-                        onClick={createCheckoutSession} loading={checkoutSessionMutation.isLoading}
+                        onClick={shouldGoToPortal ? goToPortal : createCheckoutSession}
+                        loading={shouldGoToPortal ? portalMutation.isLoading : checkoutSessionMutation.isLoading}
                     >
-                        Upgrade Now
+                        {shouldGoToPortal ? "Manage Subscription" : "Upgrade Now"}
                     </Button>
                 </Group>
             </Group>
