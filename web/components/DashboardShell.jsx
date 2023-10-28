@@ -25,12 +25,12 @@ export default function DashboardShell({ children }) {
     return (<>
         <div className="w-screen min-h-screen flex gap-md items-stretch p-md relative">
             <Stack className="w-56 sticky top-md h-full">
-                <Text
-                    component={Link} href="/"
-                    className="text-xl font-bold px-1 py-md -my-md hover:text-orange-800 hover:scale-105 hover:translate-x-1 hover:-translate-y-1 hover:-rotate-2 transition"
-                >
-                    😲 WoahAuth
-                </Text>
+                <Link href="/" className="group px-1 py-lg -my-md no-underline">
+                    <Group className="gap-sm w-full">
+                        <img src="/logo.svg" alt="WoahAuth logo" className="h-[2.5rem] group-hover:scale-110 transition-transform" />
+                        <Text className="text-dark group-hover:text-orange-800 text-xl font-bold transition-colors">WoahAuth</Text>
+                    </Group>
+                </Link>
 
                 <Stack className="gap-0">
                     <NavLink
