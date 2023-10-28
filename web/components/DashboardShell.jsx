@@ -1,5 +1,5 @@
 import { FeedbackFish } from "@feedback-fish/react"
-import { ActionIcon, Divider, Group, Menu, NavLink, Stack, Text, TextInput, Tooltip } from "@mantine/core"
+import { ActionIcon, Divider, Group, Menu, NavLink, ScrollArea, Stack, Text, TextInput, Tooltip } from "@mantine/core"
 import { useHover } from "@mantine/hooks"
 import { modals } from "@mantine/modals"
 import { signOut, useMustBeSignedIn } from "@web/modules/firebase/auth"
@@ -24,7 +24,7 @@ export default function DashboardShell({ children }) {
 
     return (<>
         <div className="w-screen min-h-screen flex gap-md items-stretch p-md relative">
-            <Stack className="w-56 sticky top-md h-full">
+            <Stack className="w-56 sticky top-md -my-md py-md h-screen">
                 <Link href="/" className="group px-1 py-lg -my-md no-underline">
                     <Group className="gap-sm w-full">
                         <img src="/logo.svg" alt="WoahAuth logo" className="h-[2.5rem] group-hover:scale-110 transition-transform" />
@@ -60,25 +60,27 @@ export default function DashboardShell({ children }) {
 
                 <Divider label="Service Clients" />
 
-                <NavLink
-                    label="New Client" icon={<TbPlus />}
-                    active
-                    className="rounded-md font-bold mb-2 -mt-2"
-                    onClick={() => modals.openContextModal({
-                        modal: "CreateClient",
-                        title: "New Service Client",
-                        centered: true,
-                        size: "lg",
-                    })}
-                />
-
-                <SearchInput value={searchQuery} onChange={setSearchQuery} />
-
-                <Stack className="gap-1">
-                    {filteredServiceClients?.map(client =>
-                        <ServiceClientLink {...client} key={client.id} />
-                    )}
-                </Stack>
+                <ScrollArea.Autosize scrollbarSize={6} className="flex-1 min-h-0">
+                    <Stack>
+                        <NavLink
+                            label="New Client" icon={<TbPlus />}
+                            active
+                            className="rounded-md font-bold mb-2"
+                            onClick={() => modals.openContextModal({
+                                modal: "CreateClient",
+                                title: "New Service Client",
+                                centered: true,
+                                size: "lg",
+                            })}
+                        />
+                        <SearchInput value={searchQuery} onChange={setSearchQuery} />
+                        <Stack className="gap-1">
+                            {filteredServiceClients?.map(client =>
+                                <ServiceClientLink {...client} key={client.id} />
+                            )}
+                        </Stack>
+                    </Stack>
+                </ScrollArea.Autosize>
             </Stack>
 
             <div className="flex-1 min-w-0 bg-gray-50 rounded-lg">
