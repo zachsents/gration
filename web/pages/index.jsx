@@ -1,5 +1,6 @@
 import { Button, Center, Divider, Stack, Text, Title } from "@mantine/core"
 import BrandCarousel from "@web/components/BrandCarousel"
+import LegalLinks from "@web/components/LegalLinks"
 import { signOut, useMustBeSignedIn } from "@web/modules/firebase/auth"
 import Link from "next/link"
 import { TbBrandX, TbDashboard, TbExternalLink, TbLogout, TbMail } from "react-icons/tb"
@@ -11,7 +12,7 @@ export default function IndexPage() {
 
     return (
         <div className="flex min-h-screen w-screen items-stretch flex-col-reverse md:flex-row">
-            <Center className="p-xl max-w-sm grow mx-auto">
+            <Center className="p-xl max-w-sm grow mx-auto relative">
                 <Stack>
                     <Title order={2} className="text-center">
                         Welcome to WoahAuth
@@ -55,11 +56,13 @@ export default function IndexPage() {
                     <Divider className="mt-4" />
 
                     <Center>
-                        <Button onClick={signOut} leftIcon={<TbLogout />}>
+                        <Button onClick={signOut} leftIcon={<TbLogout />} color="pg" variant="light">
                             Sign Out
                         </Button>
                     </Center>
                 </Stack>
+
+                <LegalLinks className="absolute bottom-2 left-2" />
             </Center>
             <div className="bg-pg-800 flex-1 min-w-0 flex flex-col items-stretch py-12">
                 <BrandCarousel showComingSoon />

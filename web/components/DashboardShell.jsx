@@ -9,6 +9,7 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { useRef } from "react"
 import { TbBug, TbChartBar, TbChevronDown, TbLogout, TbPlus, TbSearch, TbUser, TbX } from "react-icons/tb"
+import LegalLinks from "./LegalLinks"
 
 
 export default function DashboardShell({ children }) {
@@ -81,6 +82,8 @@ export default function DashboardShell({ children }) {
                         </Stack>
                     </Stack>
                 </ScrollArea.Autosize>
+
+                <LegalLinks className="-mb-2" />
             </Stack>
 
             <div className="flex-1 min-w-0 bg-gray-50 rounded-lg">

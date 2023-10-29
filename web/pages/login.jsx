@@ -2,6 +2,7 @@ import { Anchor, Button, Center, Divider, PasswordInput, Stack, Text, TextInput,
 import { useForm } from "@mantine/form"
 import { notifications } from "@mantine/notifications"
 import BrandCarousel from "@web/components/BrandCarousel"
+import LegalLinks from "@web/components/LegalLinks"
 import WaitlistAlert from "@web/components/WaitlistAlert"
 import { createUserWithEmail, signInWithEmail, signInWithGoogle, useMustNotBeSignedIn } from "@web/modules/firebase/auth"
 import { useIsMobile } from "@web/modules/util"
@@ -65,7 +66,7 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="flex min-h-screen w-screen items-stretch flex-col-reverse md:flex-row">
+        <div className="flex min-h-screen w-screen items-stretch flex-col-reverse md:flex-row relative">
             <Center className="p-xl max-w-sm grow mx-auto">
                 <form onSubmit={form.onSubmit(handleFormSubmit)}>
                     <Stack>
@@ -116,6 +117,8 @@ export default function LoginPage() {
                             </Text>}
                     </Stack>
                 </form>
+
+                <LegalLinks className="absolute bottom-2 left-2" />
             </Center>
             <div className="bg-pg-800 flex-1 min-w-0 flex flex-col items-stretch py-12">
                 <BrandCarousel />
