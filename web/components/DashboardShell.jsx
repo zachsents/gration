@@ -25,7 +25,7 @@ export default function DashboardShell({ children }) {
 
     return (<>
         <div className="w-screen min-h-screen flex gap-md items-stretch p-md relative">
-            <Stack className="w-56 sticky top-md -my-md py-md h-screen">
+            <Stack className="w-56 sticky top-0 -my-md py-md h-screen">
                 <Link href="/" className="group px-1 py-lg -my-md no-underline">
                     <Group className="gap-sm w-full">
                         <img src="/logo.svg" alt="WoahAuth logo" className="h-[2.5rem] group-hover:scale-110 transition-transform" />
