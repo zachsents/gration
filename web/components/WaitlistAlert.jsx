@@ -25,7 +25,7 @@ export default function WaitlistAlert() {
     }, [isMobile])
 
     return isMobile &&
-        <Alert title="We're accepting waitlisters!" icon="👋" color="pg" className="mb-sm">
-            Sign in to automatically join the waitlist.
+        <Alert title="We've launched!" icon="👋" color="pg" className="mb-sm">
+            Sign in to start adding integrations to your SaaS.
         </Alert>
 }
