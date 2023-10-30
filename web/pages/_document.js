@@ -29,15 +29,23 @@ export default function Document() {
                 {/* OpenGraph */}
                 <meta
                     property="og:title"
-                    content="WoahAuth | Managed OAuth flows for SaaS integrations"
+                    content="WoahAuth | Add third-party integrations to your SaaS"
                     key="ogtitle"
                 />
                 <meta
                     property="og:description"
-                    content="Simplify your SaaS integrations with our seamless OAuth solutions. Connect to Google, Stripe, Outlook, and more effortlessly. Elevate user experience with secure and swift connections."
+                    content="Enrich your SaaS products by adding integrations that allow users to access their data from other platforms. Stop dealing with OAuth flows and focus on your product."
                     key="ogdescription"
                 />
                 <meta property="og:image" content="/og.png" />
+                <meta property="og:type" content="website" />
+
+                {/* Twitter */}
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta property="twitter:title" content="WoahAuth | Add third-party integrations to your SaaS" />
+                <meta property="twitter:creator" content="@Zach_Sents" />
+                <meta property="twitter:image" content="/og.png" />
+                <meta property="twitter:description" content="Enrich your SaaS products by adding integrations that allow users to access their data from other platforms. Stop dealing with OAuth flows and focus on your product." />
 
                 {/* Assets */}
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
