@@ -27,6 +27,11 @@ export const SERVICE = {
         name: "GitHub",
         authType: SERVICE_AUTH_TYPE.OAUTH2,
     },
+    TWITTER: {
+        id: "twitter",
+        name: "X",
+        authType: SERVICE_AUTH_TYPE.OAUTH2,
+    },
 }
 
 /**

@@ -21,20 +21,25 @@ export class AuthService {
      * default paths of /authorize and /token.
      * @param {URLs} [options.urls]
      * @param {boolean} [options.usePKCE]
+     * @param {boolean} [options.ignorePKCEMismatch]
      * @param {string} [options.debugPrefix]
      * @param {(userInfo: object) => string} [options.selectUserId]
      * @param {boolean} [options.expectRefreshToken]
+     * @param {string[]} [options.scopes]
      */
     constructor(serviceId, {
         baseUrl,
         urls,
         usePKCE = false,
+        ignorePKCEMismatch = false,
         debugPrefix = "",
         selectUserId = ({ id }) => id,
         expectRefreshToken = true,
+        scopes = [],
     } = {}) {
         this.serviceId = serviceId
         this.usePKCE = usePKCE
+        this.ignorePKCEMismatch = ignorePKCEMismatch
 
         /** @type {URLs} */
         this.urls = urls || {}
@@ -46,6 +51,7 @@ export class AuthService {
         this.debugPrefix = debugPrefix
         this.selectUserId = selectUserId
         this.expectRefreshToken = expectRefreshToken
+        this.scopes = scopes
     }
 
     /**
@@ -66,7 +72,11 @@ export class AuthService {
             client_id: serviceClient.clientId,
             redirect_uri: CALLBACK_URL,
             response_type: "code",
-            scope: [...new Set([...serviceClient.scopes, ...parseScopes(request.query.scopes)])].join(" "),
+            scope: [...new Set([
+                ...serviceClient.scopes,
+                ...parseScopes(request.query.scopes)]),
+            ...this.scopes,
+            ].join(" "),
             state,
             ...this.usePKCE && {
                 code_challenge: codeChallenge,
@@ -94,7 +104,7 @@ export class AuthService {
         if (request.query.error)
             throw new Error(request.query.error_description || request.query.error || "Unknown error")
 
-        if (this.usePKCE && request.query.code_challenge != hashCodeVerifier(authState.codeVerifier))
+        if (this.usePKCE && !this.ignorePKCEMismatch && request.query.code_challenge != hashCodeVerifier(authState.codeVerifier))
             throw new Error("Code challenge doesn't match")
 
         const tokenInfo = await fetch(this.urls.token, {
@@ -218,8 +228,14 @@ export class AuthService {
         if (userInfo.error)
             throw new Error(userInfo.error_description || userInfo.error || "Unknown error")
 
+        const userId = this.selectUserId(userInfo)?.toString()
+        if (!userId) {
+            this.debug("No user ID found in response", userInfo)
+            throw new Error("Couldn't determine user ID")
+        }
+
         return {
-            id: this.selectUserId(userInfo).toString(),
+            id: userId,
             data: userInfo,
         }
     }
