@@ -2,6 +2,7 @@ import { AuthService } from "../modules/AuthService.js"
 
 
 export default new AuthService("twitter", {
+    name: "Twitter",
     baseUrl: "https://api.twitter.com/2/oauth2",
     usePKCE: true,
     ignorePKCEMismatch: true,

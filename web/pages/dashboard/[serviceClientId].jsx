@@ -12,6 +12,7 @@ import { Services, useCurrentServiceClient, useServiceClientAccounts } from "@we
 import { useDocumentMutators, useFunctionMutation } from "@zachsents/fire-query"
 import classNames from "classnames"
 import { arrayRemove } from "firebase/firestore"
+import _ from "lodash"
 import Head from "next/head"
 import { useRouter } from "next/router"
 import { TbCheck, TbCode, TbCopy, TbDots, TbKey, TbLink, TbRefresh, TbSettings, TbTrash, TbUserCancel, TbUsers } from "react-icons/tb"
@@ -246,6 +247,9 @@ function Inner({ tabValue, setTabValue }) {
                         <thead>
                             <tr>
                                 <th>Account ID</th>
+                                {serviceType.userInfoColumns?.map(col =>
+                                    <th key={col.path}>{col.label}</th>
+                                )}
                                 <th>Associated User IDs</th>
                                 <th className="w-1/4">Access Token</th>
                                 <th></th>
@@ -255,6 +259,7 @@ function Inner({ tabValue, setTabValue }) {
                             {connectedAccounts.data?.map(account =>
                                 <AccountRow
                                     account={account} serviceClientId={serviceClient.id} serviceClientSecretKey={serviceClient.secretKey}
+                                    userInfoColumns={serviceType.userInfoColumns.map(col => col.path)}
                                     key={account.id}
                                 />
                             )}
@@ -291,7 +296,7 @@ function CopyableMono({ children, value, className, breakAnywhere = false, lineC
 }
 
 
-function AccountRow({ account, serviceClientId, serviceClientSecretKey }) {
+function AccountRow({ account, serviceClientId, serviceClientSecretKey, userInfoColumns }) {
 
     const { update, delete: _deleteAccount } = useDocumentMutators([SERVICE_CLIENTS_COLLECTION, serviceClientId, CONNECTED_ACCOUNTS_SUBCOLLECTION, account.id])
 
@@ -323,6 +328,11 @@ function AccountRow({ account, serviceClientId, serviceClientSecretKey }) {
             "bg-gray-200": _deleteAccount.isLoading || update.isLoading,
         })}>
             <td>{account.id}</td>
+
+            {userInfoColumns.map(col =>
+                <td key={col}>{_.get(account, col)}</td>
+            )}
+
             <td>{account.appUsers?.map(userId =>
                 <Menu position="bottom" shadow="xs" key={userId}>
                     <Menu.Target>

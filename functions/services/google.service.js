@@ -5,6 +5,7 @@ import { CALLBACK_URL, parseScopes } from "../modules/util.js"
 /** @type {import("../modules/AuthService.js").AuthService} */
 export default {
     serviceId: "google",
+    name: "Google",
 
     urls: {
         revoke: "https://myaccount.google.com/connections",
@@ -27,7 +28,7 @@ export default {
         const tokenInfo = await client.getTokenInfo(tokens.access_token)
 
         return {
-            id: tokenInfo.email || tokenInfo.user_id,
+            id: tokenInfo.user_id,
             data: {
                 accessToken: tokens.access_token,
                 refreshToken: tokens.refresh_token,
@@ -35,6 +36,7 @@ export default {
                 tokenType: tokens.token_type,
                 idToken: tokens.id_token,
                 expiresAt: new Date(tokens.expiry_date),
+                email: tokenInfo.email,
             },
         }
     },
@@ -54,6 +56,10 @@ export default {
             },
         }
     },
+
+    scopes: [
+        "https://www.googleapis.com/auth/userinfo.email",
+    ],
 }
 
 

@@ -16,7 +16,9 @@ export class AuthService {
 
     /**
      * @param {string} serviceId
+     * 
      * @param {object} options
+     * @param {string} options.name
      * @param {string} [options.baseUrl] If provided, will be used to construct the auth and token URLs using 
      * default paths of /authorize and /token.
      * @param {URLs} [options.urls]
@@ -28,6 +30,7 @@ export class AuthService {
      * @param {string[]} [options.scopes]
      */
     constructor(serviceId, {
+        name,
         baseUrl,
         urls,
         usePKCE = false,
@@ -38,6 +41,7 @@ export class AuthService {
         scopes = [],
     } = {}) {
         this.serviceId = serviceId
+        this.name = name
         this.usePKCE = usePKCE
         this.ignorePKCEMismatch = ignorePKCEMismatch
 

@@ -2,6 +2,7 @@ import { AuthService } from "../modules/AuthService.js"
 
 
 export default new AuthService("github", {
+    name: "GitHub",
     baseUrl: "https://github.com/login/oauth",
     debugPrefix: "GitHub",
     urls: {

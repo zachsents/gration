@@ -1,11 +1,13 @@
 import { FieldValue } from "firebase-admin/firestore"
 import { HttpsError, onCall, onRequest } from "firebase-functions/v2/https"
 import Joi from "joi"
+import _ from "lodash"
 import { AUTH_STATE_COLLECTION, CONNECTED_ACCOUNTS_SUBCOLLECTION, SERVICE_CLIENTS_COLLECTION } from "shared/firestore.js"
-import { SERVICE, SERVICE_AUTH_TYPE } from "shared/services.js"
+import { SERVICE_AUTH_TYPE } from "shared/services.js"
 import { FREE_ACCOUNT_LIMIT } from "shared/stripe.js"
 import { auth, db } from "./init.js"
 import { generateSecretKey, getAccountUsage, getAuthService, getProductInfo } from "./modules/util.js"
+import authServices from "./services/index.js"
 
 
 /**
@@ -13,7 +15,7 @@ import { generateSecretKey, getAccountUsage, getAuthService, getProductInfo } fr
  */
 export const GetServices = onCall(callablePipeline(
     requireAuth(),
-    () => Object.values(SERVICE),
+    () => authServices.map(service => _.pick(service, ["serviceId", "name"])),
 ))
 
 
@@ -23,15 +25,15 @@ export const GetServices = onCall(callablePipeline(
 export const RegisterOAuth2Client = onCall(callablePipeline(
     requireAuth(),
     validateSchema(Joi.object({
-        serviceId: Joi.string().valid(...Object.values(SERVICE).map(service => service.id)).required(),
+        serviceId: Joi.string().valid(...authServices.map(service => service.serviceId)).required(),
         clientId: Joi.string().required(),
         clientSecret: Joi.string().required(),
         nickname: Joi.string(),
         scopes: Joi.array().items(Joi.string()),
     })),
     async ({ data, auth }) => {
-        const service = Object.values(SERVICE).find(service => service.id === data.serviceId)
-        data.nickname ||= `${service.name} Client`
+        const authService = getAuthService(data.serviceId)
+        data.nickname ||= `${authService.name} Client`
         data.scopes ||= []
 
         const isClientIdAlreadyRegistered = await db

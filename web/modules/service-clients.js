@@ -77,6 +77,10 @@ export const Services = [
             "workspacesAndBases:manage",
         ],
         canCreateClient: true,
+        userInfoColumns: [{
+            label: "Email",
+            path: "email",
+        }],
     },
     {
         id: "google-sheets",
@@ -383,6 +387,10 @@ export const Services = [
             "https://www.googleapis.com/auth/youtubepartner-channel-audit"
         ],
         canCreateClient: true,
+        userInfoColumns: [{
+            label: "Email",
+            path: "email",
+        }],
     },
     {
         id: "facebook",
@@ -419,6 +427,10 @@ export const Services = [
             "bookmark.write",
         ],
         canCreateClient: true,
+        userInfoColumns: [{
+            label: "@",
+            path: "data.username",
+        }],
     },
     {
         id: "github",
@@ -447,6 +459,10 @@ export const Services = [
             "workflow",
         ],
         canCreateClient: true,
+        userInfoColumns: [{
+            label: "GitHub Username",
+            path: "login",
+        }],
     },
     {
         id: "stripe",
