@@ -16,12 +16,12 @@ export default function IntegrationsSection() {
 
     return (
         <Section id="integrations" className="pt-36">
-            <div className="rounded-xl bg-pg-800 text-white pl-20 py-12 bg-right bg-no-repeat" style={{
+            <div className="-mx-md md:mx-0 md:rounded-xl bg-pg-800 text-white px-md md:pl-20 md:pr-0 py-12 bg-right md:bg-no-repeat" style={{
                 backgroundImage: "url(/graphics/shapes.svg)",
                 backgroundSize: "40%"
             }}>
                 <Group noWrap className="w-full gap-10">
-                    <Stack className="gap-xl max-w-[50%]">
+                    <Stack className="gap-xl md:max-w-[50%]">
                         <h4 className="text-3xl font-bold my-0">
                             A growing ecosystem of <span className="text-primary-600">integrations</span>
                         </h4>
@@ -34,7 +34,7 @@ export default function IntegrationsSection() {
                             placeholder="Search for integrations..."
                             classNames={{
                                 input: "focus:border-none",
-                                root: "mb-4",
+                                root: "mb-4 hidden md:block",
                             }}
                             value={query}
                             onChange={event => setQuery(event.currentTarget.value)}
@@ -45,7 +45,7 @@ export default function IntegrationsSection() {
                         </Text>
                     </Stack>
 
-                    <div className="flex-1 min-w-0">
+                    <div className="hidden md:block flex-1 min-w-0">
                         {!query &&
                             <div className="grid grid-cols-3 gap-4 px-20">
                                 {Array(3).fill().map((_, i) =>

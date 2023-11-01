@@ -19,14 +19,14 @@ export default function GraphicCTASection({ ...props }) {
                     Building valuable SaaS tools means integrating with your users' data, but adding third-party integrations is complicated.
                 </Text>
                 <Button
-                    size="lg" className="mt-10 rounded-lg"
+                    size="lg" className="mt-10 rounded-lg scale-125 md:scale-100"
                     component={Link} href={user ? "/dashboard" : "/login?register"}
                 >
                     Start now
                 </Button>
             </SectionHeader>
 
-            <div className="h-64 flex -mt-4 justify-center overflow-clip">
+            <div className="h-24 mt-10 md:h-64 md:-mt-4 flex justify-center overflow-clip">
                 <img src="/graphics/plug-guy-long.png" alt="plug guy graphic" className="h-full" />
             </div>
         </Section>

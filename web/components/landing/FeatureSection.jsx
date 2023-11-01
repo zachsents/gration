@@ -7,7 +7,7 @@ export default function FeatureSection({ ...props }) {
     return (
         <Section id="how-it-works" {...props}>
             <SectionHeader>
-                <h2 className="text-5xl font-bold">
+                <h2 className="text-4xl md:text-5xl font-bold">
                     The only tool to easily integrate with third-party services
                 </h2>
                 <Text className="text-xl">
@@ -52,13 +52,13 @@ export default function FeatureSection({ ...props }) {
 function Feature({ graphic, title, description, highlight = [], children }) {
 
     return (
-        <Group grow className="w-full gap-16 even:flex-row-reverse">
-            <div className="flex-1">
+        <Group className="w-full gap-16 flex-col-reverse md:flex-row md:even:flex-row-reverse">
+            <div className="md:flex-1">
                 {title &&
                     <Highlight
                         component="h3"
                         highlight={highlight}
-                        className="text-3xl font-bold mt-0"
+                        className="text-3xl font-bold mt-0 text-center md:text-left"
                         highlightStyles={theme => ({
                             color: theme.colors.primary[8],
                             backgroundColor: "transparent",
@@ -67,16 +67,16 @@ function Feature({ graphic, title, description, highlight = [], children }) {
                         {title}
                     </Highlight>}
                 {description &&
-                    <Text className="text-xl">
+                    <Text className="text-xl text-center md:text-left">
                         {description}
                     </Text>}
 
                 {(title || description) && children &&
-                    <Divider className="my-6 w-32" />}
+                    <Divider className="my-6 w-32 mx-auto md:mx-0" />}
 
                 {children}
             </div>
-            <div className="flex-1 min-w-0 rounded-xl overflow-clip">
+            <div className="md:flex-1 md:min-w-0 rounded-xl overflow-clip">
                 {graphic}
             </div>
         </Group>

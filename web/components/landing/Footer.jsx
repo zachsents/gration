@@ -6,9 +6,9 @@ import { TbBrandProducthunt, TbBrandX, TbChevronUp } from "react-icons/tb"
 
 export default function Footer() {
     return (
-        <footer className="mt-36 pt-36 pb-12 bg-pg-800 text-white">
+        <footer className="mt-36 pt-36 pb-12 px-md bg-pg-800 text-white">
             <div className="w-full max-w-7xl mx-auto">
-                <div className="grid grid-cols-4 gap-12">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
                     <Stack className="items-start">
                         <Brand />
                         <Text className="text-sm">
@@ -16,7 +16,7 @@ export default function Footer() {
                         </Text>
                     </Stack>
 
-                    <Stack className="text-sm [&_a]:text-white">
+                    <Stack className="text-sm [&_a]:text-white items-start">
                         <Text className="font-bold">Explore</Text>
 
                         <Divider className="w-8" />
@@ -32,7 +32,7 @@ export default function Footer() {
                         </Anchor>
                     </Stack>
 
-                    <Stack className="text-sm [&_a]:text-white">
+                    <Stack className="text-sm [&_a]:text-white items-start">
                         <Text className="font-bold">Check Us Out</Text>
 
                         <Divider className="w-8" />
@@ -45,7 +45,7 @@ export default function Footer() {
                         </Anchor>
                     </Stack>
 
-                    <Stack className="text-sm [&_a]:text-white">
+                    <Stack className="text-sm [&_a]:text-white items-start">
                         <Text className="font-bold">Get in Touch</Text>
 
                         <Divider className="w-8" />

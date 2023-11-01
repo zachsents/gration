@@ -13,8 +13,6 @@ export default function PricingSection() {
 
     const [annual, setAnnual] = useState(false)
 
-
-
     return (
         <Section id="pricing">
             <SectionHeader>
@@ -27,7 +25,7 @@ export default function PricingSection() {
                 </Text>
             </SectionHeader>
 
-            <div className="grid grid-cols-3 gap-10">
+            <div className="relative grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-20">
                 <PriceCard
                     productName="starter"
                     annual={annual}
@@ -71,21 +69,37 @@ export default function PricingSection() {
                         Contact Us
                     </Button>}
                 />
+
+                <BillingSwitch
+                    className="md:hidden sticky bottom-0 py-md bg-white"
+                    {...{ annual, setAnnual }}
+                />
             </div>
 
-            <Center className="mt-12 flex-col gap-2">
-                <Text className="text-md">
-                    Billed <span className={!annual && "font-bold"}>monthly</span> / <span className={annual && "font-bold"}>annually</span>
-                </Text>
-                <Switch
-                    checked={annual} onChange={event => setAnnual(event.currentTarget.checked)}
-                    classNames={{ track: "cursor-pointer" }}
-                    size="lg"
-                />
-            </Center>
+            <BillingSwitch
+                className="hidden md:flex mt-12"
+                {...{ annual, setAnnual }}
+            />
         </Section>
     )
 }
+
+
+function BillingSwitch({ className, annual, setAnnual, ...props }) {
+    return (
+        <Center className={classNames("flex-col gap-2", className)} {...props}>
+            <Text className="text-md">
+                Billed <span className={!annual && "font-bold"}>monthly</span> / <span className={annual && "font-bold"}>annually</span>
+            </Text>
+            <Switch
+                checked={annual} onChange={event => setAnnual(event.currentTarget.checked)}
+                classNames={{ track: "cursor-pointer" }}
+                size="lg"
+            />
+        </Center>
+    )
+}
+
 
 function PriceCard({ productName, description, annual = false, annualPrice, monthlyPrice, features = [], recommended = false, cta }) {
 
@@ -95,7 +109,7 @@ function PriceCard({ productName, description, annual = false, annualPrice, mont
 
     return (
         <div className={classNames("p-10 rounded-xl relative", {
-            "scale-110 bg-primary-500": recommended,
+            "md:scale-110 bg-primary-500": recommended,
             "bg-pg-50": !recommended,
         })}>
             {recommended &&

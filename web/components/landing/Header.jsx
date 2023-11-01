@@ -1,34 +1,39 @@
-import { Avatar, Button, Group, Menu } from "@mantine/core"
-import Link from "next/link"
-import Brand from "./Brand"
-import { useUser } from "reactfire"
-import { TbLogout } from "react-icons/tb"
+import { ActionIcon, Avatar, Button, Group, Menu, Stack } from "@mantine/core"
 import { signOut } from "@web/modules/firebase/auth"
+import Link from "next/link"
+import { TbLogout, TbMenu2 } from "react-icons/tb"
+import { useUser } from "reactfire"
+import Brand from "./Brand"
 
 
 export default function Header() {
 
     const { data: user } = useUser()
 
+    const navLinks = <>
+        <NavigationLink href="#how-it-works">
+            How It Works
+        </NavigationLink>
+        <NavigationLink href="#integrations">
+            Integrations
+        </NavigationLink>
+        <NavigationLink href="#pricing">
+            Pricing
+        </NavigationLink>
+    </>
+
     return (
         <header className="sticky top-0 bg-pg-800 z-10">
             <div className="flex justify-between items-center p-xs max-w-7xl w-full mx-auto">
                 <Group className="gap-10">
                     <Brand />
-                    <Group className="gap-xl">
-                        <NavigationLink href="#how-it-works">
-                            How It Works
-                        </NavigationLink>
-                        <NavigationLink href="#integrations">
-                            Integrations
-                        </NavigationLink>
-                        <NavigationLink href="#pricing">
-                            Pricing
-                        </NavigationLink>
+
+                    <Group className="hidden md:flex gap-xl [&_a]:text-white">
+                        {navLinks}
                     </Group>
                 </Group>
 
-                <Group className="gap-xl">
+                <Group className="hidden md:flex gap-xl">
                     {user ? <>
                         <Menu position="bottom" shadow="lg">
                             <Menu.Target>
@@ -58,6 +63,24 @@ export default function Header() {
                         </Button>
                     </>}
                 </Group>
+
+                <Menu position="bottom-end" shadow="lg" classNames={{
+                    dropdown: "p-xl",
+                }}>
+                    <Menu.Target>
+                        <ActionIcon
+                            size="xl" variant="outline" color=""
+                            className="md:hidden text-xl"
+                        >
+                            <TbMenu2 />
+                        </ActionIcon>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                        <Stack className="[&_a]:text-dark">
+                            {navLinks}
+                        </Stack>
+                    </Menu.Dropdown>
+                </Menu>
             </div>
         </header>
     )
@@ -66,7 +89,7 @@ export default function Header() {
 
 function NavigationLink({ children, ...props }) {
     return (
-        <Link {...props} className="no-underline text-white hover:text-primary text-sm font-medium">
+        <Link {...props} className="no-underline hover:text-primary text-sm font-medium">
             {children}
         </Link>
     )
