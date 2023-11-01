@@ -38,17 +38,16 @@ async function crawlDir(dir, rootDir = dir) {
 
 crawlDir("./pages").then(async entries => {
     const urlComponents = entries.map(entry =>
-        `        <url>
-            <loc>${DOMAIN}/${entry.path}</loc>
-            <lastmod>${entry.lastModified}</lastmod>
-        </url>`
+        `    <url>
+        <loc>${DOMAIN}/${entry.path}</loc>
+        <lastmod>${entry.lastModified}</lastmod>
+    </url>`
     ).join("\n")
 
-    const sitemap = `<xml version="1.0" encoding="UTF-8">
-    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urlComponents}
-    </urlset>
-</xml>`
+</urlset>`
 
     await fs.writeFile("./public/sitemap.xml", sitemap)
     console.debug("Sitemap generated")
