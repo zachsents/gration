@@ -44,7 +44,7 @@ export function useMustBeSignedIn(redirect = "/login") {
 
     useEffect(() => {
         if (hasEmitted && !user && redirect)
-            router.push(redirect)
+            router.replace(redirect)
     }, [user?.uid, hasEmitted, redirect])
 
     return user
@@ -57,6 +57,6 @@ export function useMustNotBeSignedIn(redirect = "/") {
 
     useEffect(() => {
         if (hasEmitted && user && redirect)
-            router.push(redirect)
+            router.replace(redirect)
     }, [user?.uid, hasEmitted, redirect])
 }

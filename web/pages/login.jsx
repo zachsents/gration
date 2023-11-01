@@ -15,8 +15,6 @@ import { useMutation } from "react-query"
 
 export default function LoginPage() {
 
-    useMustNotBeSignedIn("/dashboard")
-
     const isMobile = useIsMobile()
     const router = useRouter()
     const [formError, setFormError] = useState()
@@ -64,6 +62,10 @@ export default function LoginPage() {
         setFormError(null)
         emailMut.mutate(values)
     }
+
+    const shouldRedirectAway = !googleMut.isLoading && !googleMut.isSuccess &&
+        !emailMut.isLoading && !emailMut.isSuccess
+    useMustNotBeSignedIn(shouldRedirectAway && "/dashboard")
 
     return (
         <div className="flex min-h-screen w-screen items-stretch flex-col-reverse md:flex-row relative">

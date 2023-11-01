@@ -2,7 +2,7 @@ import { useAddAndWaitForSnapshot, useDocument } from "@zachsents/fire-query"
 import { useQuery } from "react-query"
 import { useUser } from "reactfire"
 import { STRIPE_CUSTOMERS_COLLECTION, STRIPE_PRODUCTS_COLLECTION } from "shared/firestore"
-import { PRODUCT_IDS, PRICE_IDS } from "shared/stripe"
+import { PRODUCT_IDS, PRICE_IDS, STRIPE_ROLE } from "shared/stripe"
 import { fire } from "./firebase"
 import { useFunctionMutation } from "@zachsents/fire-query"
 
@@ -70,4 +70,20 @@ export function useGoToCustomerPortal() {
     }
 
     return [goToPortal, funcMutation]
+}
+
+
+export function useBillingLinks(productName, annual = false) {
+    const userClaims = useUserClaims()
+    const stripeRole = userClaims.data?.stripeRole
+    const isStarter = stripeRole === STRIPE_ROLE.STARTER
+    const isBusiness = stripeRole === STRIPE_ROLE.BUSINESS
+    const isFree = !isStarter && !isBusiness
+
+    const [createCheckoutSession, checkoutSessionMutation] = useCreateCheckoutSession(productName, annual)
+    const [goToPortal, portalMutation] = useGoToCustomerPortal()
+
+    return isFree ?
+        [createCheckoutSession, checkoutSessionMutation] :
+        [goToPortal, portalMutation]
 }
