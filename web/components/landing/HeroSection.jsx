@@ -9,7 +9,7 @@ export default function HeroSection() {
 
     return (
         <div className="relative">
-            <div className="bg-pg-800 h-[calc(100vh+10rem)] absolute top-0 w-full z-[-1]" />
+            <div className="bg-pg-800 absolute top-0 bottom-64 w-full z-[-1]" />
             <div className="w-full max-w-5xl mx-auto flex flex-col text-white items-center pt-20" >
                 <h1 className="text-center text-5xl md:text-6xl font-bold">
                     Add integrations to your SaaS
