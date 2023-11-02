@@ -1,5 +1,6 @@
-import { ActionIcon, Avatar, Button, Group, Menu, Stack } from "@mantine/core"
+import { ActionIcon, Avatar, Button, Divider, Group, Menu, Stack } from "@mantine/core"
 import { signOut } from "@web/modules/firebase/auth"
+import classNames from "classnames"
 import Link from "next/link"
 import { TbLogout, TbMenu2 } from "react-icons/tb"
 import { useUser } from "reactfire"
@@ -11,6 +12,21 @@ export default function Header() {
     const { data: user } = useUser()
 
     const navLinks = <>
+        {user ? <>
+            <NavigationLink href="/dashboard" className="md:hidden">
+                Dashboard
+            </NavigationLink>
+            <Divider className="md:hidden" />
+        </> : <>
+            <NavigationLink href="/login?register" className="md:hidden">
+                Sign Up
+            </NavigationLink>
+            <NavigationLink href="/login" className="md:hidden">
+                Sign In
+            </NavigationLink>
+            <Divider className="md:hidden" />
+        </>}
+
         <NavigationLink href="#how-it-works">
             How It Works
         </NavigationLink>
@@ -20,6 +36,13 @@ export default function Header() {
         <NavigationLink href="#pricing">
             Pricing
         </NavigationLink>
+
+        {user && <>
+            <Divider className="md:hidden" />
+            <NavigationLink href="#" className="md:hidden" onClick={signOut}>
+                Sign Out
+            </NavigationLink>
+        </>}
     </>
 
     return (
@@ -53,7 +76,7 @@ export default function Header() {
                             Go to Dashboard
                         </Button>
                     </> : <>
-                        <NavigationLink href="/login">
+                        <NavigationLink href="/login" className="text-white">
                             Sign In
                         </NavigationLink>
                         <Button
@@ -87,9 +110,9 @@ export default function Header() {
 }
 
 
-function NavigationLink({ children, ...props }) {
+function NavigationLink({ children, className, ...props }) {
     return (
-        <Link {...props} className="no-underline hover:text-primary text-sm font-medium">
+        <Link {...props} className={classNames("no-underline hover:text-primary text-sm font-medium", className)}>
             {children}
         </Link>
     )

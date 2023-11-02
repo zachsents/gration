@@ -26,7 +26,7 @@ const functions = getFunctions(app)
 
 
 if (process.env.NODE_ENV == "development" || process.env.NODE_ENV == "test") {
-    // connectFunctionsEmulator(functions, "localhost", 5001)
+    connectFunctionsEmulator(functions, "localhost", 5001)
     // if (!db._settingsFrozen)
     //     connectFirestoreEmulator(db, "localhost", 8080)
 }

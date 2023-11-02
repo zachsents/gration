@@ -1,72 +1,28 @@
-import { Button, Center, Divider, Stack, Text, Title } from "@mantine/core"
-import BrandCarousel from "@web/components/BrandCarousel"
-import LegalLinks from "@web/components/LegalLinks"
-import { signOut, useMustBeSignedIn } from "@web/modules/firebase/auth"
-import Link from "next/link"
-import { TbBrandX, TbDashboard, TbExternalLink, TbLogout, TbMail } from "react-icons/tb"
+import FeatureSection from "@web/components/landing/FeatureSection"
+import Footer from "@web/components/landing/Footer"
+import GraphicCTASection from "@web/components/landing/GraphicCTASection"
+import Header from "@web/components/landing/Header"
+import HeroSection from "@web/components/landing/HeroSection"
+import IntegrationsSection from "@web/components/landing/IntegrationsSection"
+import PricingSection from "@web/components/landing/PricingSection"
+import Head from "next/head"
 
 
-export default function IndexPage() {
+export default function Landing2Page() {
 
-    useMustBeSignedIn()
+    return (<>
+        <Head>
+            <title key="title">Add integrations to your SaaS | WoahAuth</title>
+        </Head>
+        <Header />
+        <HeroSection />
+        <FeatureSection className="mt-16" />
+        <IntegrationsSection />
+        <GraphicCTASection className="mt-24 bg-pg-800 text-white" />
 
-    return (
-        <div className="flex min-h-screen w-screen items-stretch flex-col-reverse md:flex-row">
-            <Center className="p-xl max-w-sm grow mx-auto relative">
-                <Stack>
-                    <Title order={2} className="text-center">
-                        Welcome to WoahAuth
-                    </Title>
-                    <Text className="text-center text-lg">
-                        You've joined! 🎉
-                    </Text>
-                    <Text className="text-center text-gray">
-                        Get hyped! Connecting to your users' accounts is about to get a whole lot easier.
-                    </Text>
+        <PricingSection />
 
-                    <Button
-                        color="pg" leftIcon={<TbDashboard />}
-                        component={Link} href="/dashboard"
-                    >
-                        Go to Dashboard
-                    </Button>
-
-                    <Divider />
-
-                    <Text className="text-gray text-center">
-                        Follow me on X for updates.
-                    </Text>
-                    <Button
-                        color="dark" leftIcon={<TbBrandX />} rightIcon={<TbExternalLink />}
-                        component="a" target="_blank" href="https://x.com/Zach_Sents"
-                    >
-                        @Zach_Sents
-                    </Button>
-
-                    <Text className="text-gray text-center mt-4">
-                        Email me if you have any questions.
-                    </Text>
-                    <Button
-                        color="pg" leftIcon={<TbMail />} variant="light"
-                        component="a" target="_blank" href="mailto:info@woahauth.com"
-                    >
-                        info@woahauth.com
-                    </Button>
-
-                    <Divider className="mt-4" />
-
-                    <Center>
-                        <Button onClick={signOut} leftIcon={<TbLogout />} color="pg" variant="light">
-                            Sign Out
-                        </Button>
-                    </Center>
-                </Stack>
-
-                <LegalLinks className="absolute bottom-2 left-2" />
-            </Center>
-            <div className="bg-pg-800 flex-1 min-w-0 flex flex-col items-stretch py-12">
-                <BrandCarousel showComingSoon />
-            </div>
-        </div>
-    )
+        <Footer />
+    </>)
 }
+
