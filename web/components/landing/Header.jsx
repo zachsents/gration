@@ -48,7 +48,7 @@ export default function Header() {
                             </Menu.Dropdown>
                         </Menu>
                         <Button
-                            component={Link} href="/dashboard"
+                            component={Link} href="/dashboard" variant="outline"
                         >
                             Go to Dashboard
                         </Button>

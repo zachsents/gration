@@ -195,6 +195,7 @@ export const GetAccountsUsage = onCall(callablePipeline(
 ))
 
 
+export * from "./demo.js"
 export * from "./api.js"
 
 
