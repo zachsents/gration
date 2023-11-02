@@ -28,7 +28,7 @@ export default {
         const tokenInfo = await client.getTokenInfo(tokens.access_token)
 
         return {
-            id: tokenInfo.user_id,
+            id: tokenInfo.sub,
             data: {
                 accessToken: tokens.access_token,
                 refreshToken: tokens.refresh_token,
@@ -65,7 +65,6 @@ export default {
 
 /**
  * @param {import("../index.js").ServiceClient} serviceClient
- * @returns {import("googleapis").Auth.OAuth2Client}
  */
 function getOAuth2Client(serviceClient) {
     return new google.auth.OAuth2({
