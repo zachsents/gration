@@ -1,4 +1,4 @@
-import { Avatar, Badge, Button, Group, Stack, Text } from "@mantine/core"
+import { Avatar, Badge, Button, Center, Group, Loader, Stack, Text } from "@mantine/core"
 import { useFunctionQuery } from "@zachsents/fire-query"
 import { useState } from "react"
 import { TbArrowLeft, TbArrowRight, TbBrandGoogle } from "react-icons/tb"
@@ -111,6 +111,11 @@ function LiveDemo() {
                 <TbArrowRight className="text-2xl absolute top-0 left-0 rotate-45" />
                 <TbArrowRight className="text-2xl absolute bottom-0 left-0 -rotate-45" />
             </div>
+
+            {(userInfoQuery.isLoading || tokenQuery.isLoading) &&
+                <Center>
+                    <Loader variant="bars" />
+                </Center>}
 
             {userInfoQuery.data && <>
                 <Group>
