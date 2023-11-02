@@ -3,6 +3,7 @@ const path = require("path")
 
 
 const DOMAIN = "https://woahauth.com"
+const EXCLUDE = [/^dashboard/, "login"]
 
 
 async function crawlDir(dir, rootDir = dir) {
@@ -32,14 +33,19 @@ async function crawlDir(dir, rootDir = dir) {
             })
     )
 
-    return results.flat()
+    return results.flat().filter(entry => EXCLUDE.every(exclude => {
+        if (exclude instanceof RegExp)
+            return !exclude.test(entry.path)
+
+        return entry.path !== exclude
+    }))
 }
 
 
 crawlDir("./pages").then(async entries => {
     const urlComponents = entries.map(entry =>
         `    <url>
-        <loc>${DOMAIN}/${entry.path}</loc>
+        <loc>${DOMAIN}${entry.path ? "/" : ""}${entry.path}</loc>
         <lastmod>${entry.lastModified}</lastmod>
     </url>`
     ).join("\n")

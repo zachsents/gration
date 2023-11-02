@@ -1,19 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-        <loc>https://woahauth.com/dashboard/billing</loc>
-        <lastmod>2023-10-28T19:59:11.263Z</lastmod>
-    </url>
-    <url>
-        <loc>https://woahauth.com/dashboard</loc>
-        <lastmod>2023-10-19T22:02:16.057Z</lastmod>
-    </url>
-    <url>
-        <loc>https://woahauth.com/</loc>
+        <loc>https://woahauth.com</loc>
         <lastmod>2023-10-29T03:42:22.270Z</lastmod>
-    </url>
-    <url>
-        <loc>https://woahauth.com/login</loc>
-        <lastmod>2023-11-01T20:46:00.561Z</lastmod>
     </url>
 </urlset>

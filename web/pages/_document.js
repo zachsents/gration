@@ -2,6 +2,10 @@ import { additionalCSSVariables } from "@web/theme"
 import { Head, Html, Main, NextScript } from "next/document"
 
 
+const headline = "Add integrations to your SaaS"
+const description = "Simplify adding integrations to your SaaS. Connect to Google, Airtable, GitHub, and more without implementing complex authentication flows."
+
+
 export default function Document() {
 
     return (
@@ -12,10 +16,10 @@ export default function Document() {
                 <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
 
                 {/* Title & Description */}
-                <title key="title">Never build an OAuth flow again | WoahAuth</title>
+                <title key="title">{headline} | WoahAuth</title>
                 <meta
                     name="description"
-                    content="Simplify your SaaS integrations with our seamless OAuth solutions. Connect to Google, Stripe, Outlook, and more effortlessly. Elevate user experience with secure and swift connections."
+                    content={description}
                     key="description"
                 />
 
@@ -29,12 +33,12 @@ export default function Document() {
                 {/* OpenGraph */}
                 <meta
                     property="og:title"
-                    content="WoahAuth | Add third-party integrations to your SaaS"
+                    content={`WoahAuth | ${headline}`}
                     key="ogtitle"
                 />
                 <meta
                     property="og:description"
-                    content="Enrich your SaaS products by adding integrations that allow users to access their data from other platforms. Stop dealing with OAuth flows and focus on your product."
+                    content={description}
                     key="ogdescription"
                 />
                 <meta property="og:image" content="/og.png" />
@@ -42,10 +46,10 @@ export default function Document() {
 
                 {/* Twitter */}
                 <meta name="twitter:card" content="summary_large_image" />
-                <meta property="twitter:title" content="WoahAuth | Add third-party integrations to your SaaS" />
+                <meta property="twitter:title" content={`WoahAuth | ${headline}`} />
                 <meta property="twitter:creator" content="@Zach_Sents" />
                 <meta property="twitter:image" content="/og.png" />
-                <meta property="twitter:description" content="Enrich your SaaS products by adding integrations that allow users to access their data from other platforms. Stop dealing with OAuth flows and focus on your product." />
+                <meta property="twitter:description" content={description} />
 
                 {/* Assets */}
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
