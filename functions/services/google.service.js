@@ -14,9 +14,12 @@ export default {
     generateAuthUrl: async ({ serviceClient, request, state }) => {
         const url = getOAuth2Client(serviceClient).generateAuthUrl({
             access_type: "offline",
-            scope: [...new Set([...serviceClient.scopes, ...parseScopes(request.query.scopes)])],
+            scope: [...new Set([
+                ...serviceClient.scopes,
+                ...parseScopes(request.query.scopes),
+                "https://www.googleapis.com/auth/userinfo.email",
+            ])],
             state,
-            // include_granted_scopes: true,
         })
 
         return { url }
@@ -56,10 +59,6 @@ export default {
             },
         }
     },
-
-    scopes: [
-        "https://www.googleapis.com/auth/userinfo.email",
-    ],
 }
 
 

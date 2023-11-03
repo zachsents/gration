@@ -10,9 +10,8 @@ export default new AuthService("twitter", {
     urls: {
         authorize: "https://twitter.com/i/oauth2/authorize",
         userInfo: "https://api.twitter.com/2/users/me",
-        // revoke: "https://airtable.com/",
     },
     scopes: ["offline.access", "users.read"],
-    selectUserId: ({ data }) => data.id,
+    selectUserId: account => account.userData.data.id,
 })
 

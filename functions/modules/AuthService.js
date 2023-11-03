@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from "crypto"
 import { CALLBACK_URL, parseScopes } from "./util.js"
 import { Timestamp } from "firebase-admin/firestore"
+import _ from "lodash"
 
 
 /**
@@ -22,11 +23,12 @@ export class AuthService {
      * @param {string} [options.baseUrl] If provided, will be used to construct the auth and token URLs using 
      * default paths of /authorize and /token.
      * @param {URLs} [options.urls]
-     * @param {boolean} [options.usePKCE]
-     * @param {boolean} [options.ignorePKCEMismatch]
+     * @param {boolean} [options.usePKCE=false]
+     * @param {boolean} [options.ignorePKCEMismatch=false]
      * @param {string} [options.debugPrefix]
      * @param {(userInfo: object) => string} [options.selectUserId]
-     * @param {boolean} [options.expectRefreshToken]
+     * @param {boolean} [options.expectRefreshToken=true]
+     * @param {boolean} [options.fetchUserInfoOnCallback=true]
      * @param {string[]} [options.scopes]
      */
     constructor(serviceId, {
@@ -36,8 +38,9 @@ export class AuthService {
         usePKCE = false,
         ignorePKCEMismatch = false,
         debugPrefix = "",
-        selectUserId = ({ id }) => id,
+        selectUserId = (account) => account.userData?.id,
         expectRefreshToken = true,
+        fetchUserInfoOnCallback = true,
         scopes = [],
     } = {}) {
         this.serviceId = serviceId
@@ -55,6 +58,7 @@ export class AuthService {
         this.debugPrefix = debugPrefix
         this.selectUserId = selectUserId
         this.expectRefreshToken = expectRefreshToken
+        this.fetchUserInfoOnCallback = fetchUserInfoOnCallback
         this.scopes = scopes
     }
 
@@ -78,9 +82,9 @@ export class AuthService {
             response_type: "code",
             scope: [...new Set([
                 ...serviceClient.scopes,
-                ...parseScopes(request.query.scopes)]),
-            ...this.scopes,
-            ].join(" "),
+                ...parseScopes(request.query.scopes),
+                ...this.scopes,
+            ])].join(" "),
             state,
             ...this.usePKCE && {
                 code_challenge: codeChallenge,
@@ -111,7 +115,7 @@ export class AuthService {
         if (this.usePKCE && !this.ignorePKCEMismatch && request.query.code_challenge != hashCodeVerifier(authState.codeVerifier))
             throw new Error("Code challenge doesn't match")
 
-        const tokenInfo = await fetch(this.urls.token, {
+        const tokenResponse = await fetch(this.urls.token, {
             method: "POST",
             headers: {
                 ...basicAuthorizationHeader(serviceClient),
@@ -126,26 +130,34 @@ export class AuthService {
             }).toString()
         }).then(parseResponse)
 
-        if (tokenInfo.error)
-            throw new Error(tokenInfo.error_description || tokenInfo.error || "Unknown error")
+        if (tokenResponse.error)
+            throw new Error(tokenResponse.error_description || tokenResponse.error || "Unknown error")
 
-        const userInfo = await this.getUserInfo(tokenInfo.access_token)
+        const userData = this.fetchUserInfoOnCallback ?
+            await this.getUserInfo(tokenResponse.access_token) :
+            {}
 
-        return {
-            id: userInfo.id,
-            data: {
-                accessToken: tokenInfo.access_token,
-                refreshToken: tokenInfo.refresh_token,
-                tokenType: tokenInfo.token_type,
-                expiresAt: tokenInfo.expires_in ?
-                    new Date(Date.now() + tokenInfo.expires_in * 1000) :
-                    null,
-                refreshExpiresAt: tokenInfo.refresh_expires_in ?
-                    new Date(Date.now() + tokenInfo.refresh_expires_in * 1000) :
-                    tokenInfo.refresh_token ? null : undefined,
-                ...userInfo.data,
-            },
+        const accountData = {
+            accessToken: tokenResponse.access_token,
+            refreshToken: tokenResponse.refresh_token,
+            tokenType: tokenResponse.token_type,
+            expiresAt: tokenResponse.expires_in ?
+                new Date(Date.now() + tokenResponse.expires_in * 1000) :
+                null,
+            refreshExpiresAt: tokenResponse.refresh_expires_in ?
+                new Date(Date.now() + tokenResponse.refresh_expires_in * 1000) :
+                tokenResponse.refresh_token ? null : undefined,
+            tokenData: _.omit(tokenResponse, ["access_token", "refresh_token", "token_type", "expires_in", "refresh_expires_in"]),
+            userData,
         }
+
+        const accountId = this.selectUserId(accountData)?.toString()
+        if (!accountId) {
+            this.debug("No user ID found", accountData)
+            throw new Error("Couldn't determine user ID")
+        }
+
+        return { id: accountId, data: accountData }
     }
 
     /**
@@ -232,16 +244,7 @@ export class AuthService {
         if (userInfo.error)
             throw new Error(userInfo.error_description || userInfo.error || "Unknown error")
 
-        const userId = this.selectUserId(userInfo)?.toString()
-        if (!userId) {
-            this.debug("No user ID found in response", userInfo)
-            throw new Error("Couldn't determine user ID")
-        }
-
-        return {
-            id: userId,
-            data: userInfo,
-        }
+        return userInfo
     }
 
     debug(...args) {
