@@ -107,7 +107,7 @@ export class AuthService {
      * @param {import("./util.js").AuthState} options.authState
      * @returns {Promise<{ id: string, data: import("./util.js").ConnectedAccount }>}
      */
-    async handleOAuth2Callback({ serviceClient, request, authState }) {
+    async handleCallback({ serviceClient, request, authState }) {
 
         if (request.query.error)
             throw new Error(request.query.error_description || request.query.error || "Unknown error")

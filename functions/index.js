@@ -158,7 +158,7 @@ export const HandleOAuth2Callback = onRequest(async (req, res) => {
     if (!authService)
         return res.status(501).send("Not implemented")
 
-    const connectedAccount = await authService.handleOAuth2Callback({
+    const connectedAccount = await authService.handleCallback({
         request: req,
         serviceClient,
         authState,

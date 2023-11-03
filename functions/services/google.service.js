@@ -25,7 +25,7 @@ export default {
         return { url }
     },
 
-    handleOAuth2Callback: async ({ serviceClient, request }) => {
+    handleCallback: async ({ serviceClient, request }) => {
         const client = getOAuth2Client(serviceClient)
         const { tokens } = await client.getToken(request.query.code)
         const tokenInfo = await client.getTokenInfo(tokens.access_token)
