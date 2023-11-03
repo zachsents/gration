@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Center, CopyButton, Group, Loader, Menu, Stack, Table, Tabs, Text, Timeline, Title, Tooltip } from "@mantine/core"
+import { ActionIcon, Alert, Button, Center, CopyButton, Group, Loader, Menu, Stack, Table, Tabs, Text, Timeline, Title, Tooltip } from "@mantine/core"
 import { useForm } from "@mantine/form"
 import { useLocalStorage } from "@mantine/hooks"
 import { modals } from "@mantine/modals"
@@ -238,6 +238,12 @@ function Inner({ tabValue, setTabValue }) {
                                 scopesListUrl={serviceType.scopesListUrl} scopesList={serviceType.scopesList}
                                 {...form.getInputProps("scopes")}
                             />
+
+                            <Alert color="pg">
+                                <Text className="text-sm">
+                                    <b>Note:</b> when you add new scopes, users will need to re-authorize their accounts.
+                                </Text>
+                            </Alert>
                         </Stack>
                     </form>
                 </Tabs.Panel>
