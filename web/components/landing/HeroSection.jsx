@@ -1,7 +1,7 @@
-import { Avatar, Badge, Button, Center, Group, Loader, Stack, Text } from "@mantine/core"
+import { Avatar, Badge, Button, Card, Center, Group, Loader, Stack, Text } from "@mantine/core"
 import { useFunctionQuery } from "@zachsents/fire-query"
 import { useState } from "react"
-import { TbArrowLeft, TbArrowRight, TbBrandGoogle } from "react-icons/tb"
+import { TbArrowLeft, TbArrowRight, TbBrandGoogle, TbStarFilled } from "react-icons/tb"
 import { useQuery } from "react-query"
 import CTAButton from "./CTAButton"
 
@@ -13,7 +13,7 @@ export default function HeroSection() {
         <div className="relative">
             <div className="bg-pg-800 absolute top-0 -bottom-10 md:bottom-64 w-full z-[-1]" />
             <div className="w-full max-w-5xl mx-auto flex flex-col text-white items-stretch px-md pt-20" >
-                <Group className="mb-24 md:gap-20 items-start justify-center">
+                <Group className="md:gap-20 items-start justify-center">
                     <div className="flex-1">
                         <Text className="text-center md:text-left text-pg-200 text-lg font-bold -mb-6">
                             Hey SaaS developer!
@@ -37,17 +37,49 @@ export default function HeroSection() {
                     <LiveDemo />
                 </Group>
 
-                <h3 id="how-it-works" className="text-2xl text-center scroll-m-20">
-                    What developers see
-                </h3>
-
-                <div className="hidden md:block w-full rounded-xl p-xl bg-pg-300">
-                    <img src="/graphics/demo-diagram.png" className="w-full" />
+                <div className="mt-10">
+                    <h3 className="text-2xl text-center">
+                        Hear from some happy founders
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <TestimonialCard
+                            avatarSrc="/photos/zach-sents.jpg"
+                            name="Zach Sents"
+                            description="Minus | Business Automation SaaS"
+                        >
+                            WoahAuth is an instrumental part of our infrastructure. Without it, our product's
+                            utility would be severely limited.
+                        </TestimonialCard>
+                        <TestimonialCard
+                            avatarSrc="/photos/johnny-garcia.jpg"
+                            name="Johnny Garcia"
+                            description="Virtue | Software Startup Consultancy"
+                        >
+                            Development speed is critical for the companies we
+                            work with, and WoahAuth helps us deliver.
+                        </TestimonialCard>
+                        <TestimonialCard
+                            avatarSrc="/photos/zack-allen.jpg"
+                            name="Zack Allen"
+                            description="Talented | Offshore Talent Platform"
+                        >
+                            WoahAuth is an instrumental part of our infrastructure. Without it, our product's
+                            utility would be severely limited.
+                        </TestimonialCard>
+                    </div>
                 </div>
 
-                <div className="md:hidden w-full h-[24rem] px-xs">
-                    <div className="w-full h-full rounded-xl p-xl bg-pg-300 overflow-scroll">
-                        <img src="/graphics/demo-diagram.png" className="w-[200vw]" />
+                <div id="how-it-works" className="mt-24 scroll-m-20">
+                    <h3 className="text-2xl text-center">
+                        What developers see
+                    </h3>
+                    <div className="hidden md:block w-full rounded-xl p-xl bg-pg-300">
+                        <img src="/graphics/demo-diagram.png" className="w-full" />
+                    </div>
+                    <div className="md:hidden w-full h-[24rem] px-xs">
+                        <div className="w-full h-full rounded-xl p-xl bg-pg-300 overflow-scroll">
+                            <img src="/graphics/demo-diagram.png" className="w-[200vw]" />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -130,5 +162,30 @@ function LiveDemo() {
                 </pre>
             </>}
         </Stack>
+    )
+}
+
+
+function TestimonialCard({ avatarSrc, name, description, children }) {
+    return (
+        <Card className="rounded-lg p-10 ">
+            <Stack className="gap-sm">
+                <Group noWrap className="text-yellow gap-1">
+                    <TbStarFilled />
+                    <TbStarFilled />
+                    <TbStarFilled />
+                    <TbStarFilled />
+                    <TbStarFilled />
+                </Group>
+                <Text className="text-md">{children}</Text>
+                <Group noWrap className="items-start">
+                    <Avatar src={avatarSrc} className="mt-1" />
+                    <div>
+                        <Text className="font-bold">{name}</Text>
+                        <Text className="text-sm text-gray italic">{description}</Text>
+                    </div>
+                </Group>
+            </Stack>
+        </Card>
     )
 }
