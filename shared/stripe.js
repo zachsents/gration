@@ -10,8 +10,8 @@ export const PRICE_IDS = {
         annual: "price_1O36NjHYINHn5cdTJurZz7w8",
     },
     business: {
-        monthly: "price_1O36OkHYINHn5cdTgnsQeZUx",
-        annual: "price_1O36OkHYINHn5cdTYThYSqxJ",
+        monthly: "price_1O8Rb7HYINHn5cdTRClNov1C",
+        annual: "price_1O8RneHYINHn5cdTbTbXbJAW",
     },
 }
 

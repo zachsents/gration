@@ -87,7 +87,7 @@ export default function DashboardBillingPage() {
                     {!isBusiness &&
                         <BillingCard
                             productName={STRIPE_ROLE.BUSINESS} color="primary"
-                            monthlyPrice={89} annualPrice={949}
+                            monthlyPrice={49} annualPrice={499}
                             shouldGoToPortal={!isFree}
                             {...{ annual, setAnnual }}
                         />}

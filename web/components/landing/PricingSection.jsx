@@ -40,7 +40,7 @@ export default function PricingSection() {
                 <PriceCard
                     productName="business"
                     annual={annual}
-                    annualPrice={949} monthlyPrice={89}
+                    annualPrice={499} monthlyPrice={49}
                     description="For growing SaaS companies"
                     features={[
                         "Unlimited integration clients",
@@ -53,7 +53,7 @@ export default function PricingSection() {
                 <PriceCard
                     productName="enterprise"
                     annual={annual}
-                    annualPrice={2199} monthlyPrice={199}
+                    annualPrice={1999} monthlyPrice={199}
                     description="For established SaaS companies with large userbases"
                     features={[
                         "Unlimited integration clients",

@@ -55,16 +55,16 @@ export default function HeroSection() {
                             name="Johnny Garcia"
                             description="Virtue | Software Startup Consultancy"
                         >
-                            Development speed is critical for the companies we
-                            work with, and WoahAuth helps us deliver.
+                            Development speed is critical for the companies we work with, and WoahAuth helps
+                            us deliver.
                         </TestimonialCard>
                         <TestimonialCard
                             avatarSrc="/photos/zack-allen.jpg"
                             name="Zack Allen"
                             description="Talented | Offshore Talent Platform"
                         >
-                            WoahAuth is an instrumental part of our infrastructure. Without it, our product's
-                            utility would be severely limited.
+                            Being able to export lists to Google Sheets is a valuable feature for our users,
+                            made possible by WoahAuth.
                         </TestimonialCard>
                     </div>
                 </div>
