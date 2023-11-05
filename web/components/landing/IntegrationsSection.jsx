@@ -8,14 +8,14 @@ import { TbCheck, TbClock } from "react-icons/tb"
 const ShownServices = Services.filter(service => !service.hidden)
 
 
-export default function IntegrationsSection() {
+export default function IntegrationsSection({ ...props }) {
 
     const [filteredServices, query, setQuery] = useSearch(ShownServices, {
         selector: service => service.name,
     })
 
     return (
-        <Section id="integrations" className="pt-36">
+        <Section id="integrations" {...props}>
             <div className="-mx-md md:mx-0 md:rounded-xl bg-pg-800 text-white px-md md:pl-20 md:pr-0 py-12 bg-right md:bg-no-repeat" style={{
                 backgroundImage: "url(/graphics/shapes.svg)",
                 backgroundSize: "40%"
@@ -23,7 +23,7 @@ export default function IntegrationsSection() {
                 <Group noWrap className="w-full gap-10">
                     <Stack className="gap-xl md:max-w-[50%]">
                         <h4 className="text-3xl font-bold my-0">
-                            A growing ecosystem of <span className="text-primary-600">integrations</span>
+                            Enjoy a growing ecosystem of <span className="text-primary-600">integrations</span>
                         </h4>
                         <Text className="text-xl">
                             We're always adding new integrations to give your SaaS more power 💪

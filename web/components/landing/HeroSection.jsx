@@ -10,9 +10,9 @@ export default function HeroSection() {
 
 
     return (
-        <div className="relative">
-            <div className="bg-pg-800 absolute top-0 -bottom-10 md:bottom-64 w-full z-[-1]" />
-            <div className="w-full max-w-5xl mx-auto flex flex-col text-white items-stretch px-md pt-20" >
+        <div className="relative bg-pg-800">
+            {/* <div className="bg-pg-800 absolute top-0 -bottom-10 md:bottom-64 w-full z-[-1]" /> */}
+            <div className="w-full max-w-5xl mx-auto flex flex-col text-white items-stretch px-md py-20" >
                 <Group className="md:gap-20 items-start justify-center">
                     <div className="flex-1">
                         <Text className="text-center md:text-left text-pg-200 text-lg font-bold -mb-6">
@@ -23,10 +23,7 @@ export default function HeroSection() {
                             Add third-party integrations to your SaaS
                         </h1>
                         <Text className="text-center md:text-left text-xl max-w-3xl">
-                            Building valuable SaaS tools means integrating with your users' data.
-                        </Text>
-                        <Text className="text-center md:text-left text-xl max-w-3xl">
-                            WoahAuth saves you from building complex authentication flows.
+                            Setup your integrations in the WoahAuth dashboard then use our API to authenticate users and get access tokens. That's it.
                         </Text>
 
                         <div className="flex justify-center md:block">
@@ -69,7 +66,7 @@ export default function HeroSection() {
                     </div>
                 </div>
 
-                <div id="how-it-works" className="mt-24 scroll-m-20">
+                {/* <div id="how-it-works" className="mt-24 scroll-m-20">
                     <h3 className="text-2xl text-center">
                         What developers see
                     </h3>
@@ -81,7 +78,7 @@ export default function HeroSection() {
                             <img src="/graphics/demo-diagram.png" className="w-[200vw]" />
                         </div>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     )

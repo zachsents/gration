@@ -26,30 +26,7 @@ export default function PricingSection() {
             </SectionHeader>
 
             <div className="relative grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-20">
-                <PriceCard
-                    productName="starter"
-                    annual={annual}
-                    annualPrice={199} monthlyPrice={19}
-                    description="For small projects and personal use"
-                    features={[
-                        "Unlimited integration clients",
-                        "Up to 1,000 connected accounts",
-                        "API key integrations",
-                    ]}
-                />
-                <PriceCard
-                    productName="business"
-                    annual={annual}
-                    annualPrice={499} monthlyPrice={49}
-                    description="For growing SaaS companies"
-                    features={[
-                        "Unlimited integration clients",
-                        "Up to 50,000 connected accounts",
-                        "API key integrations",
-                        "Integration Portal for your users",
-                    ]}
-                    recommended
-                />
+
                 <PriceCard
                     productName="enterprise"
                     annual={annual}
@@ -68,6 +45,30 @@ export default function PricingSection() {
                     >
                         Contact Us
                     </Button>}
+                />
+                <PriceCard
+                    productName="business"
+                    annual={annual}
+                    annualPrice={499} monthlyPrice={49}
+                    description="For growing SaaS companies"
+                    features={[
+                        "Unlimited integration clients",
+                        "Up to 50,000 connected accounts",
+                        "API key integrations",
+                        "Integration Portal for your users",
+                    ]}
+                    recommended
+                />
+                <PriceCard
+                    productName="starter"
+                    annual={annual}
+                    annualPrice={199} monthlyPrice={19}
+                    description="For small projects and personal use"
+                    features={[
+                        "Unlimited integration clients",
+                        "Up to 1,000 connected accounts",
+                        "API key integrations",
+                    ]}
                 />
 
                 <BillingSwitch

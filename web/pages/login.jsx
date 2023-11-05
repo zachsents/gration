@@ -40,7 +40,7 @@ export default function LoginPage() {
     })
 
     const onSuccess = () => {
-        router.push("/dashboard")
+        router.push("/dashboard/billing")
         notifications.clean()
     }
 

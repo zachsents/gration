@@ -1,7 +1,6 @@
 import { Divider, Group, Highlight, Stack, Text, ThemeIcon } from "@mantine/core"
 import Section, { SectionHeader } from "@web/components/landing/Section"
 import classNames from "classnames"
-import { useMemo } from "react"
 import { TbBrandAirtable, TbBrandGithub, TbBrandGoogle, TbPlus } from "react-icons/tb"
 
 
@@ -10,7 +9,7 @@ export default function FeatureSection({ ...props }) {
         <Section {...props}>
             <SectionHeader>
                 <h2 className="text-4xl md:text-5xl font-bold">
-                    The only tool to easily integrate with third-party services
+                    Make integrations quick & easy
                 </h2>
                 <Text className="text-xl">
                     Building valuable SaaS tools means integrating with your users' data, but adding third-party integrations is complicated.
@@ -18,28 +17,6 @@ export default function FeatureSection({ ...props }) {
             </SectionHeader>
 
             <Stack className="gap-36">
-                <Feature
-                    title="Empower your users with access to their own data"
-                    highlight={["Empower", "users", "data"]}
-                    description="Provide your users with a personalized, data-rich experience that keeps them engaged and productive."
-                    graphic={<img src="/graphics/connect.png" alt="connect graphic" className="max-w-full" />}
-                >
-                    <BarChartDecoration amount={50} />
-                </Feature>
-                <Feature
-                    title="Broaden your eligible userbase"
-                    highlight={["Broaden", "userbase"]}
-                    description="You access a whole new world of potential users by integrating universally-utilized platforms like Google, Airtable, and GitHub into your SaaS."
-                    graphic={<img src="/graphics/announce.png" alt="announce graphic" className="max-w-full" />}
-                >
-                    <Group noWrap className="gap-md">
-                        <IconGroup icons={[TbBrandGoogle, TbBrandAirtable, TbBrandGithub, TbPlus]} />
-
-                        <Text className="text-sm">
-                            More integrations = More addressable users
-                        </Text>
-                    </Group>
-                </Feature>
                 <Feature
                     title="Save hours and eliminate complexity"
                     highlight={["Save hours"]}
@@ -55,6 +32,43 @@ export default function FeatureSection({ ...props }) {
                             <Text className="text-green">+8</Text>
                             <Text className="text-red">-462</Text>
                         </Group>
+                    </Group>
+                </Feature>
+                {/* <Feature
+                    title="Empower your users with access to their own data"
+                    highlight={["Empower", "users", "data"]}
+                    description="Provide your users with a personalized, data-rich experience that keeps them engaged and productive."
+                    graphic={<img src="/graphics/connect.png" alt="connect graphic" className="max-w-full" />}
+                >
+                    <BarChartDecoration amount={50} />
+                </Feature> */}
+                {/* <Feature
+                    title="Broaden your eligible userbase"
+                    highlight={["Broaden", "userbase"]}
+                    description="You access a whole new world of potential users by integrating universally-utilized platforms like Google, Airtable, and GitHub into your SaaS."
+                    graphic={<img src="/graphics/announce.png" alt="announce graphic" className="max-w-full" />}
+                >
+                    <Group noWrap className="gap-md">
+                        <IconGroup icons={[TbBrandGoogle, TbBrandAirtable, TbBrandGithub, TbPlus]} />
+
+                        <Text className="text-sm">
+                            More integrations = More addressable users
+                        </Text>
+                    </Group>
+                </Feature> */}
+
+                <Feature
+                    title="Add more integrations without adding code"
+                    highlight={["more integrations"]}
+                    description="Use the same code to ship countless more integrations. Your developers & your users will thank you."
+                    graphic={<img src="/graphics/connect.png" alt="connect graphic" className="max-w-full" />}
+                >
+                    <Group noWrap className="gap-md">
+                        <IconGroup icons={[TbBrandGoogle, TbBrandAirtable, TbBrandGithub, TbPlus]} />
+
+                        <Text className="text-sm">
+                            More integrations = More addressable users
+                        </Text>
                     </Group>
                 </Feature>
             </Stack>
@@ -115,15 +129,15 @@ function IconGroup({ icons = [], className, ...props }) {
 }
 
 
-function BarChartDecoration({ amount = 10 }) {
+// function BarChartDecoration({ amount = 10 }) {
 
-    const heights = useMemo(() => Array(amount).fill().map(() => `${Math.floor(Math.random() * 100)}%`), [amount])
+//     const heights = useMemo(() => Array(amount).fill().map(() => `${Math.floor(Math.random() * 100)}%`), [amount])
 
-    return (
-        <div className="flex gap-1 h-8 items-end">
-            {heights.map((height, i) =>
-                <div key={i} className="flex-1 bg-pg-100" style={{ height }} />
-            )}
-        </div>
-    )
-}
+//     return (
+//         <div className="flex gap-1 h-8 items-end">
+//             {heights.map((height, i) =>
+//                 <div key={i} className="flex-1 bg-pg-100" style={{ height }} />
+//             )}
+//         </div>
+//     )
+// }
