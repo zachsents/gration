@@ -12,6 +12,6 @@ export default new AuthService("twitter", {
         userInfo: "https://api.twitter.com/2/users/me",
     },
     scopes: ["offline.access", "users.read"],
-    selectUserId: account => account.userData.data.id,
+    selectUserId: account => account.userData.data?.id,
 })
 
