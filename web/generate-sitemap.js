@@ -54,6 +54,7 @@ crawlDir("./pages").then(async entries => {
     posts.forEach(post => urlComponents.push(
         `    <url>
         <loc>${DOMAIN}/blog/${post.split(".")[0]}</loc>
+        <lastmod>${new Date().toISOString()}</lastmod>
     </url>`
     ))
 
