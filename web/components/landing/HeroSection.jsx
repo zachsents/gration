@@ -23,7 +23,7 @@ export default function HeroSection() {
                             Add third-party integrations to your SaaS
                         </h1>
                         <Text className="text-center md:text-left text-xl max-w-3xl">
-                            Setup your integrations in the WoahAuth dashboard then use our API to authenticate users and get access tokens. That's it.
+                            WoahAuth provides dashboard and API to setup integrations, authenticate users, and get access tokens. Dead simple.
                         </Text>
 
                         <div className="flex justify-center md:block">
