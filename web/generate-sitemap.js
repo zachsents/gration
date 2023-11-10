@@ -48,11 +48,18 @@ crawlDir("./pages").then(async entries => {
         <loc>${DOMAIN}${entry.path ? "/" : ""}${entry.path}</loc>
         <lastmod>${entry.lastModified}</lastmod>
     </url>`
-    ).join("\n")
+    )
+
+    const posts = await fs.readdir("posts")
+    posts.forEach(post => urlComponents.push(
+        `    <url>
+        <loc>${DOMAIN}/blog/${post.split(".")[0]}</loc>
+    </url>`
+    ))
 
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urlComponents}
+${urlComponents.join("\n")}
 </urlset>`
 
     await fs.writeFile("./public/sitemap.xml", sitemap)

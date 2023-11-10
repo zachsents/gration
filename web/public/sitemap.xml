@@ -4,4 +4,11 @@
         <loc>https://woahauth.com</loc>
         <lastmod>2023-11-05T01:32:15.566Z</lastmod>
     </url>
+    <url>
+        <loc>https://woahauth.com/sitemap.xml</loc>
+        <lastmod>2023-11-10T01:11:07.330Z</lastmod>
+    </url>
+    <url>
+        <loc>https://woahauth.com/blog/manually-authenticate-slack-oauth</loc>
+    </url>
 </urlset>
