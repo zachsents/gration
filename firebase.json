@@ -43,6 +43,10 @@
                 "function": {
                     "functionId": "api"
                 }
+            },
+            {
+                "regex": "^/blog/([^/]+?)(?:/)?$",
+                "destination": "/blog/[slug].html"
             }
         ],
         "cleanUrls": true
