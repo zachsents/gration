@@ -18,6 +18,10 @@ export default function BlogPostShell({ children, posts, meta, toc }) {
 
     const minHeadingOrder = Math.min(...toc.map(heading => heading.order))
 
+    const heroImageSource = meta.heroImage === true ?
+        `/post-images/${meta.slug}.png` :
+        meta.heroImage
+
     return (<>
         <Header />
         <Grid className="w-full max-w-7xl mx-auto gap-10 py-10">
@@ -61,6 +65,9 @@ export default function BlogPostShell({ children, posts, meta, toc }) {
                     })}
                 </Text>
 
+                {meta.heroImage &&
+                    <img src={heroImageSource} className="max-w-full max-h-96 rounded-lg my-6" />}
+
                 {meta.cta &&
                     <Alert title="Complicated, right?" classNames={{ title: "text-dark" }} className="my-xl">
                         <Stack className="items-start">
@@ -78,9 +85,9 @@ export default function BlogPostShell({ children, posts, meta, toc }) {
                 </div>
 
                 {meta.otherPosts &&
-                    <Stack className="mt-10">
+                    <Stack id="other-posts" className="mt-10 scroll-m-20">
                         <Text className="font-bold">Other Posts</Text>
-                        <div className="grid grid-cols-3">
+                        <div className="grid grid-cols-3 gap-md">
                             {meta.otherPosts.map(slug => {
                                 const post = posts.find(post => post.slug === slug)
                                 return (
@@ -109,6 +116,13 @@ export default function BlogPostShell({ children, posts, meta, toc }) {
                             {heading.title}
                         </Anchor>
                     )}
+
+                    <Anchor
+                        component={Link} href="#other-posts"
+                        className="text-sm text-dark"
+                    >
+                        Other Posts
+                    </Anchor>
                 </Stack>
             </Grid.Col>
         </Grid>

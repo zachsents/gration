@@ -2,7 +2,7 @@ export const meta = {
     title: "Manually authenticate with Slack OAuth",
     updatedAt: "2023-11-10T00:35:56.608Z",
     type: "article",
-    // otherPosts: ["tutorial-add-slack-integration-to-saas"],
+    otherPosts: ["benefits-slack-integration-saas"],
     // cta: "tutorial-add-slack-integration-to-saas",
 }
 
@@ -64,7 +64,7 @@ After enabling OAuth for your Slack app, you need to configure the OAuth & Permi
 
 **1. Add Redirect URLs:** In the "Redirect URLs" section, add the URLs where Slack will redirect users after they authorize your app. Make sure to include both the development and production URLs if applicable.
 
-**2. Define Scopes:** Scopes determine the level of access your app has to a user's Slack workspace. In the "Scopes" section, select the scopes required for your app. Scopes may include permissions to read channels, send messages, manage users, and more. Choose the scopes that align with your app's functionality. [Here is a full list of scopes]("https://api.slack.com/scopes").
+**2. Define Scopes:** Scopes determine the level of access your app has to a user's Slack workspace. In the "Scopes" section, select the scopes required for your app. Scopes may include permissions to read channels, send messages, manage users, and more. Choose the scopes that align with your app's functionality. [Here is a full list of scopes](https://api.slack.com/scopes).
 
 **3. Save Changes:** After configuring the redirect URLs and scopes, save your changes to apply the OAuth settings.
 
@@ -97,8 +97,8 @@ Once the user has granted (or denied) access to your application, Slack will red
 
 To swap the authorization code for an access token, you need to make a POST request to the `oauth.v2.access` endpoint.
 
-<pre class="bg-gray-100 rounded-lg p-md text-sm">
-{`fetch('https://slack.com/api/oauth.v2.access', {
+        <pre class="bg-gray-100 rounded-lg p-md text-sm">
+                    {`fetch('https://slack.com/api/oauth.v2.access', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -114,7 +114,7 @@ To swap the authorization code for an access token, you need to make a POST requ
     console.log(data);
 })
 .catch(error => console.error('Error:', error));`}
-</pre>
+        </pre>
 
 Replace `YOUR_AUTHORIZATION_CODE`, `YOUR_CLIENT_ID`, and `YOUR_CLIENT_SECRET` with your actual authorization code, client ID, and client secret.
 
