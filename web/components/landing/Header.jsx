@@ -61,7 +61,7 @@ export default function Header() {
                         <Menu position="bottom" shadow="lg">
                             <Menu.Target>
                                 <Avatar src={user.photoURL} className="cursor-pointer rounded-full">
-                                    {user.displayName[0] || user.email[0]}
+                                    {user.displayName?.[0] || user.email?.[0]}
                                 </Avatar>
                             </Menu.Target>
                             <Menu.Dropdown>
