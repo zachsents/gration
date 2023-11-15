@@ -166,7 +166,7 @@ export const HandleOAuth2Callback = onRequest(async (req, res) => {
 
     if (!connectedAccount.id) {
         console.debug(connectedAccount)
-        return res.status(500).send("There's a problem with the service. Please report this to <a href='mailto:info@woahauth.com?subject=Bug+Report: No Account ID'>info@woahauth.com</a>.")
+        return res.status(500).send("There's a problem with the service. Please report this to <a href='mailto:info@woahauth.com?subject=Bug%20Report: No Account ID'>info@woahauth.com</a>.")
     }
 
     const connectedAccountRef = serviceClientRef.collection(CONNECTED_ACCOUNTS_SUBCOLLECTION)

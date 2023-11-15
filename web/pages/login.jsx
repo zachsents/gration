@@ -117,6 +117,10 @@ export default function LoginPage() {
                                 Don't have an account? <Anchor component={Link} href="/login?register" span className="font-bold">
                                     Register now.</Anchor>
                             </Text>}
+
+                        <Anchor className="text-gray text-sm text-center" href={`mailto:info@woahauth.com?subject=Forgot%20Password${form.values.email ? `:%20${form.values.email}` : ""}`}>
+                            Forgot your password?
+                        </Anchor>
                     </Stack>
                 </form>
 

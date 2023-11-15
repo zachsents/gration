@@ -41,7 +41,7 @@ export default function IntegrationsSection({ ...props }) {
                         />
 
                         <Text className="text-sm">
-                            Want something specific? <Anchor href="mailto:info@woahauth.com?subject=Integration+Request">Request an integration</Anchor>.
+                            Want something specific? <Anchor href="mailto:info@woahauth.com?subject=Integration%20Request">Request an integration</Anchor>.
                         </Text>
                     </Stack>
 

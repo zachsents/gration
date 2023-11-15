@@ -41,7 +41,7 @@ export default function PricingSection() {
                     ]}
                     cta={<Button
                         variant="white" color="pg"
-                        component="a" href="mailto:info@woahauth.com?subject=Enterprise+Inquiry"
+                        component="a" href="mailto:info@woahauth.com?subject=Enterprise%20Inquiry"
                     >
                         Contact Us
                     </Button>}
