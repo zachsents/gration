@@ -125,7 +125,7 @@ export const AuthorizeOAuth2User = onRequest(async (req, res) => {
 
     await authStateRef.set({
         serviceClientId,
-        appUserId: req.query.user,
+        appUserId: req.query.user || undefined,
         createdAt: FieldValue.serverTimestamp(),
         ...additionalState,
     })

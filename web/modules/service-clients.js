@@ -1,7 +1,7 @@
 import { useCollectionQuery, useDocument } from "@zachsents/fire-query"
 import { where } from "firebase/firestore"
 import { useRouter } from "next/router"
-import { TbBrandAirtable, TbBrandAsana, TbBrandAzure, TbBrandBitbucket, TbBrandFacebook, TbBrandGithub, TbBrandGitlab, TbBrandGmail, TbBrandGoogle, TbBrandGoogleDrive, TbBrandSlack, TbBrandStripe, TbBrandTrello, TbBrandX, TbBrandZoom, TbForms, TbTable } from "react-icons/tb"
+import { TbBrandAirtable, TbBrandAsana, TbBrandAzure, TbBrandBitbucket, TbBrandFacebook, TbBrandGithub, TbBrandGitlab, TbBrandGmail, TbBrandGoogle, TbBrandGoogleDrive, TbBrandLinkedin, TbBrandSlack, TbBrandStripe, TbBrandTrello, TbBrandX, TbBrandZoom, TbForms, TbTable } from "react-icons/tb"
 import { useUser } from "reactfire"
 import { CONNECTED_ACCOUNTS_SUBCOLLECTION, SERVICE_CLIENTS_COLLECTION } from "shared/firestore"
 
@@ -660,6 +660,41 @@ export const Services = [
         userInfoColumns: [{
             label: "Team",
             path: "tokenData.team.name",
+        }],
+    },
+    {
+        id: "linkedin",
+        name: "LinkedIn",
+        icon: TbBrandLinkedin,
+        color: "blue",
+        built: true,
+        dashboardName: "LinkedIn Developers",
+        scopesListUrl: "https://learn.microsoft.com/en-us/linkedin/shared/authentication/getting-access",
+        scopesList: [
+            "profile",
+            "email",
+            "w_member_social",
+            "rw_organization_admin",
+            "r_organization_admin",
+            "w_organization_social",
+            "r_organization_social",
+            "rw_ads",
+            "r_ads",
+            "r_ads_reporting",
+            "r_basicprofile",
+            "r_marketing_leadgen_automation",
+            "rw_dmp_segments",
+            "r_sales_nav_analytics",
+            "r_sales_nav_display",
+            "r_sales_nav_validation",
+            "r_sales_nav_profiles",
+            "r_compliance",
+            "w_compliance",
+        ],
+        canCreateClient: true,
+        userInfoColumns: [{
+            label: "Email",
+            path: "userData.email",
         }],
     },
     {

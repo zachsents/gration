@@ -29,6 +29,7 @@ export class AuthService {
      * @param {(userInfo: object) => string} [options.selectUserId]
      * @param {boolean} [options.expectRefreshToken=true]
      * @param {boolean} [options.fetchUserInfoOnCallback=true]
+     * @param {boolean} [options.passClientCredentialsAsParameters=false]
      * @param {string[]} [options.scopes]
      */
     constructor(serviceId, {
@@ -38,9 +39,10 @@ export class AuthService {
         usePKCE = false,
         ignorePKCEMismatch = false,
         debugPrefix = "",
-        selectUserId = (account) => account.userData?.id,
+        selectUserId = (account) => account.userData?.id || account.userData?.sub,
         expectRefreshToken = true,
         fetchUserInfoOnCallback = true,
+        passClientCredentialsAsParameters = false,
         scopes = [],
     } = {}) {
         this.serviceId = serviceId
@@ -59,6 +61,7 @@ export class AuthService {
         this.selectUserId = selectUserId
         this.expectRefreshToken = expectRefreshToken
         this.fetchUserInfoOnCallback = fetchUserInfoOnCallback
+        this.passClientCredentialsAsParameters = passClientCredentialsAsParameters
         this.scopes = scopes
     }
 
@@ -118,7 +121,7 @@ export class AuthService {
         const tokenResponse = await fetch(this.urls.token, {
             method: "POST",
             headers: {
-                ...basicAuthorizationHeader(serviceClient),
+                ...(!this.passClientCredentialsAsParameters && basicAuthorizationHeader(serviceClient)),
                 "Content-Type": "application/x-www-form-urlencoded",
                 "Accept": "application/json",
             },
@@ -126,7 +129,11 @@ export class AuthService {
                 code: request.query.code,
                 redirect_uri: CALLBACK_URL,
                 grant_type: "authorization_code",
-                ...(this.usePKCE && { code_verifier: authState.codeVerifier })
+                ...(this.usePKCE && { code_verifier: authState.codeVerifier }),
+                ...(this.passClientCredentialsAsParameters && {
+                    client_id: serviceClient.clientId,
+                    client_secret: serviceClient.clientSecret,
+                }),
             }).toString()
         }).then(parseResponse)
 
@@ -168,8 +175,10 @@ export class AuthService {
      */
     async getFreshToken({ serviceClient, connectedAccount }) {
 
+        const connectedAccountExpiresAt = connectedAccount.expiresAt?.toDate()
+
         const isExpired = connectedAccount.expiresAt === null ? false :
-            (connectedAccount.expiresAt < Date.now() - 5 * 60 * 1000)
+            (connectedAccountExpiresAt < Date.now() + 5 * 60 * 1000)
 
         if (!isExpired) {
 
@@ -179,7 +188,7 @@ export class AuthService {
                     checked: false,
                     data: {
                         accessToken: connectedAccount.accessToken,
-                        expiresAt: connectedAccount.expiresAt,
+                        expiresAt: connectedAccountExpiresAt,
                     },
                 }
             }
@@ -194,7 +203,7 @@ export class AuthService {
                     checked: true,
                     data: {
                         accessToken: connectedAccount.accessToken,
-                        expiresAt: connectedAccount.expiresAt,
+                        expiresAt: connectedAccountExpiresAt,
                     },
                 }
             }
@@ -206,13 +215,17 @@ export class AuthService {
         const tokenInfo = await fetch(this.urls.token, {
             method: "POST",
             headers: {
-                ...basicAuthorizationHeader(serviceClient),
+                ...(!this.passClientCredentialsAsParameters && basicAuthorizationHeader(serviceClient)),
                 "Content-Type": "application/x-www-form-urlencoded",
                 "Accept": "application/json",
             },
             body: new URLSearchParams({
                 refresh_token: connectedAccount.refreshToken,
                 grant_type: "refresh_token",
+                ...(this.passClientCredentialsAsParameters && {
+                    client_id: serviceClient.clientId,
+                    client_secret: serviceClient.clientSecret,
+                }),
             }).toString()
         }).then(parseResponse)
 
@@ -294,5 +307,5 @@ function isWithinCachedTimePeriod(timestamp, cacheTimeMins = 5) {
  * @param {Response} res
  */
 async function parseResponse(res) {
-    return res.json()
+    return res.ok ? res.json() : res.text().then(text => Promise.reject(text))
 }
